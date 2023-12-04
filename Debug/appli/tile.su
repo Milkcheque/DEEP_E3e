@@ -1,0 +1,4 @@
+tile.c:17:10:getTiles	4	static
+tile.c:25:9:getIndexTile	4	static
+tile.c:36:6:createTile	32	static
+tile.c:47:6:drawGround	48	static

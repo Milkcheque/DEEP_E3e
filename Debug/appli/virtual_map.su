@@ -1,0 +1,4 @@
+virtual_map.c:62:6:initMap	16	static
+virtual_map.c:81:12:getOffsetDisplay	4	static
+virtual_map.c:90:6:setOffsetDisplay	16	static
+virtual_map.c:95:14:getMapSettings	4	static
