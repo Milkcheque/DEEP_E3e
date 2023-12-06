@@ -44,11 +44,11 @@ void createTile(uint16_t x, uint16_t y, uint16_t width, uint16_t height){
  * @param 	width: width of the tile
  * @param 	height: height of the tile
  */
-void drawGround(uint16_t offset[2]){
-    for(uint16_t i=0; i<indexTile; i++){
+void drawGround(void){
+    for(uint16_t i=0; i<=indexTile; i++){
         //Efface l'ancienne image de la tuile
-		ILI9341_DrawFilledRectangle(tiles[i].prev_pos[0]+offset[0], tiles[i].prev_pos[1]+offset[1], tiles[i].prev_pos[0]+offset[0]+tiles[i].width, tiles[i].prev_pos[1]+offset[1]+tiles[i].height, ILI9341_COLOR_WHITE);
+		//ILI9341_DrawFilledRectangle(tiles[i].prev_pos[0], tiles[i].prev_pos[1], tiles[i].prev_pos[0]+tiles[i].width, tiles[i].prev_pos[1]+tiles[i].height, ILI9341_COLOR_WHITE);
 		//Affiche la nouvelle
-        ILI9341_DrawFilledRectangle(tiles[i].pos[0]+offset[0], tiles[i].pos[1]+offset[1], tiles[i].pos[0]+offset[0]+tiles[i].width, tiles[i].pos[1]+offset[1]+tiles[i].height, ILI9341_COLOR_BROWN);
+        ILI9341_DrawFilledRectangle(tiles[i].pos[0], tiles[i].pos[1], tiles[i].pos[0]+tiles[i].width, tiles[i].pos[1]+tiles[i].height, ILI9341_COLOR_BLACK);
     }
 }

@@ -19,8 +19,6 @@ typedef struct{
 }settings_t;
 
 void initMap(void);
-uint16_t * getOffsetDisplay(void);
-void setOffsetDisplay(uint16_t x, uint16_t y);
 settings_t * getMapSettings(void);
 
 #endif /* VIRTUAL_MAP_H_ */

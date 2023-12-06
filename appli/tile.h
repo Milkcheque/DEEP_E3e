@@ -19,6 +19,6 @@ typedef struct{
 tile_t * getTiles(void);
 int16_t getIndexTile(void);
 void createTile(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
-void drawGround(uint16_t offset[2]);
+void drawGround(void);
 
 #endif /* TILE_H_ */

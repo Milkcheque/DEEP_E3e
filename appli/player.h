@@ -57,12 +57,11 @@ typedef struct {
 } cooldown_t;
 
 void initPlayer(void);
-void setPosPlayer(int16_t x, int16_t y);
+void setPosPlayer(uint16_t x, uint16_t y);
 player_t * getPlayer(void);
 cooldown_t * getCooldown(void);
 void update_playerMovement(void);
-void applyGravity(void);
-void drawPlayer(uint16_t offset[2]);
+void drawPlayer(void);
 void updatePlayer(void);
 
 #endif /* PLAYER_H_ */

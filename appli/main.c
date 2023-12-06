@@ -19,6 +19,7 @@
 #include "player.h"
 #include "animation.h"
 #include "virtual_map.h"
+#include "tile.h"
 
 void display_update(void);
 
@@ -158,17 +159,15 @@ int main(void)
 }
 
 /*
- * @brief Mettre dans un tableau tous les �l�ments � afficher pour pouvoir les afficher dans cette fonction
- * @retval rien
+ * @brief Affiche les éléments du jeu
  */
 void display_update(void)
 {
-	uint16_t * offset = getOffsetDisplay();
-	// player
-	drawPlayer(offset);
 	// background
 	// obstacles
-	drawGround(offset);
+	drawGround();
+	// player
+	drawPlayer();
 	// enemies
 	// bullets 
 }
