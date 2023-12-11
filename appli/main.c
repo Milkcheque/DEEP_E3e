@@ -6,6 +6,7 @@
   * @brief   Default main function.
   ******************************************************************************
 */
+#include <map.h>
 #include "stm32f1xx_hal.h"
 #include "stm32f1_uart.h"
 #include "stm32f1_sys.h"
@@ -18,7 +19,6 @@
 #include "stm32f1_adc.h"
 #include "player.h"
 #include "animation.h"
-#include "virtual_map.h"
 #include "tile.h"
 
 void display_update(void);
@@ -28,11 +28,11 @@ void display_update(void);
  */
 void process_display_ms(void)
 {
-	static volatile uint32_t t_FPS = 60;
+	static volatile uint32_t t_FPS = 30;
 	if(t_FPS)
 		t_FPS--;
 	if(t_FPS <= 0){
-		t_FPS = 60;
+		t_FPS = 30;
 		display_update();
 	}
 }
@@ -105,6 +105,8 @@ int main(void)
 	ILI9341_Init();
 	ILI9341_Rotate(ILI9341_Orientation_Landscape_2);
 	ILI9341_Fill(ILI9341_COLOR_WHITE);
+	//initialisation du tactile
+	XPT2046_init();
 
 
 	while(1){
@@ -115,6 +117,9 @@ int main(void)
 			PLAY,
 			BREAK
 		}state_e;
+
+		static int16_t static_x,static_y;
+		int16_t x, y;
 
 		static state_e state = INIT;
 		switch(state)
@@ -130,31 +135,44 @@ int main(void)
 				break;
 
 			case MENU:
+				/*if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+				{
+					Systick_add_callback_function(&process_display_ms);
+					Systick_add_callback_function(&process_updatePlayer_ms);
+					Systick_add_callback_function(&process_updateCD_ms);
+
+					ILI9341_DrawCircle(static_x,static_y,15,ILI9341_COLOR_WHITE);
+					ILI9341_DrawCircle(x,y,15,ILI9341_COLOR_BLUE);
+					static_x = x;
+					static_y = y;
+
+					state = PLAY;
+				}
+				*/
 				break;
 
 			case PLAY:
+				/*if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+				{
+					Systick_remove_callback_function(process_display_ms);
+					Systick_remove_callback_function(process_updatePlayer_ms);
+					Systick_remove_callback_function(process_updateCD_ms);
+
+					ILI9341_DrawCircle(static_x,static_y,15,ILI9341_COLOR_WHITE);
+					ILI9341_DrawCircle(x,y,15,ILI9341_COLOR_BLUE);
+					static_x = x;
+					static_y = y;
+
+					state = MENU;
+				}
+				*/
 				//updatePlayer();
+
 				break;
 
 			default:
 				break;
 		}
-		/*if(t_FPS <= 0){
-			t_FPS = 50;
-			display_update();
-		}*/
-		/*ILI9341_printf(200,200,&Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE, "%i",ADC_getValue(ADC_JOYSTICK_Y_CHANNEL));
-		ILI9341_printf(200,150,&Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE, "%i",player_attr.pos_y);
-		*/
-
-		//test BP
-		/*
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9)){
-			ILI9341_Fill(ILI9341_COLOR_BLUE);
-		} else {
-			ILI9341_Fill(ILI9341_COLOR_RED);
-		}
-		*/
 	}
 }
 

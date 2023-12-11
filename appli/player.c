@@ -4,10 +4,10 @@
  *  Created on: 22 nov. 2023
  *      Author: Arnaud Morillon
  */
+#include <map.h>
 #include "player.h"
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
-#include "virtual_map.h"
 #include "tile.h"
 
 #define ADC_JOYSTICK_X_CHANNEL	ADC_1
@@ -78,7 +78,7 @@ void initPlayer(void)
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
 	//Init cooldowns
 	cooldown.hasJumped, cooldown.hasShot = false;
-	cooldown.jumpCD = 150;
+	cooldown.jumpCD = 100;
 	cooldown.shootCD =500;
 	//Init player status
 	playerStatus = IDLE;
@@ -92,10 +92,11 @@ void update_playerMovement(void)
  	uint16_t X = (uint16_t)ADC_getValue(ADC_JOYSTICK_X_CHANNEL);
 	if(X < 2000)
 	{
-		player.hitbox_pos[0] -= (int16_t)((4095-X/4095)*5);
-	} else if(X > 2120)
+		player.hitbox_pos[0] += (int16_t)((4095-X)*8/4095);
+	}
+	else if(X > 2120)
 	{
-		player.hitbox_pos[0] += (int16_t)((4095-X/4095)*5);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
+		player.hitbox_pos[0] -= (int16_t)(X*8/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
 	}
 	if(!physStatus.onGround && player.hitbox_pos[1] + player.hitbox_height < 240)
 	{
@@ -141,7 +142,7 @@ void jump(void){
 /*
  * @brief 	Vérifie si le joueur est en collision avec une tuile
  */
-//Pour savoir si collision -> if(horizontalCollision() && verticalCollision()) ou juste faire en fonction des physStatus
+//Regarder https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
 void checkCollision(void){
 	tile_t * tiles = getTiles();
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
@@ -263,9 +264,12 @@ void drawPlayer(){
 	//Affiche la nouvelle
 	int16_t posX = player.hitbox_pos[0]-5;
 	int16_t posY = player.hitbox_pos[1]-10;
+	if(posX < 0 || posY < 0){
+		posX = (posX<0)?0:posX;
+		posY = (posY<0)?0:posY;
+	}
 	ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
 	ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
-	
 	player.prev_pos_x = posX;
 	player.prev_pos_y = posY;
 }
@@ -275,5 +279,5 @@ void drawPlayer(){
  */
 void updatePlayer(void){
 	update_playerMovement();
-	checkCollision();
+	//checkCollision();
 }

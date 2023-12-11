@@ -9,9 +9,9 @@ C_SRCS += \
 ../appli/foo.c \
 ../appli/joystick.c \
 ../appli/main.c \
+../appli/map.c \
 ../appli/player.c \
-../appli/tile.c \
-../appli/virtual_map.c 
+../appli/tile.c 
 
 S_UPPER_SRCS += \
 ../appli/assembleur.S 
@@ -22,9 +22,9 @@ OBJS += \
 ./appli/foo.o \
 ./appli/joystick.o \
 ./appli/main.o \
+./appli/map.o \
 ./appli/player.o \
-./appli/tile.o \
-./appli/virtual_map.o 
+./appli/tile.o 
 
 S_UPPER_DEPS += \
 ./appli/assembleur.d 
@@ -34,9 +34,9 @@ C_DEPS += \
 ./appli/foo.d \
 ./appli/joystick.d \
 ./appli/main.d \
+./appli/map.d \
 ./appli/player.d \
-./appli/tile.d \
-./appli/virtual_map.d 
+./appli/tile.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -390,10 +390,6 @@ void initAnim(){
 	*/
 }
 
-uint16_t * getRun(){
-	return &run0;
-}
-
 /*
  * @brief Renvoie le pointeur de l'animation voulue
  * @param animation recherch�e
@@ -416,4 +412,6 @@ uint16_t * getAnim(playerStatus_e animation){
 	if(animation == DEATH)
 		return &death[indexAnim];
 	*/
+	else
+		return &idle[0];
 }

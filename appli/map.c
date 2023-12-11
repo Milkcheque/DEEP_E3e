@@ -5,7 +5,7 @@
  *      Author: Arnaud Morillon
  */
 
-#include "virtual_map.h"
+#include "map.h"
 #include "tile.h"
 #include "macro_types.h"
 #include "player.h"

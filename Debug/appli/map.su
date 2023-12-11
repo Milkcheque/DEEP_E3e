@@ -1,0 +1,2 @@
+map.c:45:6:initMap	16	static
+map.c:61:14:getMapSettings	4	static
