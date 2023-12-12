@@ -21,6 +21,7 @@ typedef enum{
 	RUN,
 	JUMP,
 	FALL,
+	LAND,
 	SHOOT,
 	DAMAGED,
 	DEATH
