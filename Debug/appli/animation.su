@@ -1,8 +1,8 @@
 animation.c:24:6:setIndexAnim	16	static
 animation.c:32:6:incrementIndexAnim	4	static
 animation.c:42:9:getIndexAnim	4	static
-animation.c:1175:10:flipImageY	48	dynamic
-animation.c:1191:10:transformTransparency	1520	static
-animation.c:1205:6:initAnim	4	static
-animation.c:1247:12:getAnim	16	static
-animation.c:1268:13:stateMachine_animation	24	static
+animation.c:1176:10:flipImageY	48	dynamic
+animation.c:1192:10:transformTransparency	1520	static
+animation.c:1206:6:initAnim	4	static
+animation.c:1246:12:getAnim	16	static
+animation.c:1267:13:stateMachine_animation	24	static

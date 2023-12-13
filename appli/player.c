@@ -9,6 +9,7 @@
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
 #include "tile.h"
+#include "animation.h"
 
 #define ADC_JOYSTICK_X_CHANNEL	ADC_1
 #define ADC_JOYSTICK_Y_CHANNEL	ADC_0	//sont invers�s intentionnellement pour avoir le d�placement sur le bon axe
@@ -73,7 +74,7 @@ void initPlayer(void)
 	player.hitbox_pos[0] = (int16_t)(player.pos_x + 5);
 	player.hitbox_pos[1] = (int16_t)(player.pos_y + 10);
 	player.hitbox_width = (int8_t)(player.width - 10);
-	player.hitbox_height = (int8_t)(player.height - 10);
+	player.hitbox_height = (int8_t)(player.height - 5);
 	//Init physical status
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
 	//Init cooldowns
@@ -89,35 +90,41 @@ void initPlayer(void)
  */
 void update_playerMovement(void)
 {
+	//Déplacement horizontal
  	uint16_t X = (uint16_t)ADC_getValue(ADC_JOYSTICK_X_CHANNEL);
 	if(X < 2000)
 	{
-		player.hitbox_pos[0] += (int16_t)((4095-X)*8/4095);
+		player.speed_x = (int16_t)((4095-X)*8/4095);
 	}
 	else if(X > 2120)
 	{
-		player.hitbox_pos[0] -= (int16_t)(X*8/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
-	}
-	if(!physStatus.onGround && player.hitbox_pos[1] + player.hitbox_height < 240)
-	{
-		applyGravity();
+		player.speed_x = -(int16_t)(X*8/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
 	}
 	else
 	{
-		player.speed_y = 0;
-		player.hitbox_pos[1] = 240 - player.hitbox_height;
+		player.speed_x = 0;
 	}
+	if(!physStatus.onGround)
+		applyGravity();
+	else
+		player.speed_y = 0;
+
+	if(player.hitbox_pos[1] + player.hitbox_height > 240)
+		player.hitbox_pos[1] = 240 - player.hitbox_height;
+
 	//Jump
 	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && !cooldown.hasJumped)
 	{
 		jump();
 	}
+	player.hitbox_pos[0] += player.speed_x;
 	player.hitbox_pos[1] += player.speed_y;
+
 	//Limites
-	if(player.hitbox_pos[0] < 0)
-		player.hitbox_pos[0] = 0;
-	else if(player.hitbox_pos[0] + player.hitbox_width > getMapSettings()->width)
-		player.hitbox_pos[0] = getMapSettings()->width - player.hitbox_width;
+	if(player.hitbox_pos[0] < 5)
+		player.hitbox_pos[0] = 5;
+	else if(player.hitbox_pos[0] + player.hitbox_width > getMapSettings()->width-5)
+		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour �viter une d�formation de l'image
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
 	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
@@ -136,7 +143,7 @@ void applyGravity(void){
  */
 void jump(void){
 	cooldown.hasJumped = true;
-	player.speed_y = -20;
+	player.speed_y = -18;
 }
 
 /*
@@ -145,36 +152,46 @@ void jump(void){
 //Regarder https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
 void checkCollision(void){
 	tile_t * tiles = getTiles();
-	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
+	physStatus.onGround = false;
+	physStatus.onCeiling = false;
+	physStatus.onLeft = false;
+	physStatus.onRight = false;
 	for(uint8_t i=0; i<=getIndexTile(); i++)
 	{
-		//Collision à droite
-		if(rightCollision(tiles[i]) && (bottomCollision(tiles[i]) || topCollision(tiles[i])))
+		//Regarde s'il n'y a pas collision
+		if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
+		|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
+		|| (tiles[i].pos[1] >= player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
+		|| (tiles[i].pos[1] + tiles[i].height <= player.hitbox_pos[1]))  		// trop en haut
+		{}
+		else
 		{
-			physStatus.onRight = true;
-			player.hitbox_pos[0] = tiles[i].pos[0] - player.width;
-		}
-		//Collision à gauche
-		else if(leftCollision(tiles[i]) && (bottomCollision(tiles[i]) || topCollision(tiles[i])))
-		{
-			physStatus.onLeft = true;
-			player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-		}
-		//Collision en bas
-		if(bottomCollision(tiles[i]) && (rightCollision(tiles[i]) || leftCollision(tiles[i])))
-		{
-			physStatus.onGround = true;
-			player.hitbox_pos[1] = tiles[i].pos[1] - player.height;
-		}
-		//Collision en haut
-		if(topCollision(tiles[i]) && (rightCollision(tiles[i]) || leftCollision(tiles[i])))
-		{
-			physStatus.onCeiling = true;
-			player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+			//Collision à droite
+			if(rightCollision(tiles[i]))
+			{
+				physStatus.onRight = true;
+				player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+			}
+			//Collision à gauche
+			else if(leftCollision(tiles[i]))
+			{
+				physStatus.onLeft = true;
+				player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+			}
+			//Collision en bas
+			if(bottomCollision(tiles[i]))
+			{
+				physStatus.onGround = true;
+				player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height +1;
+			}
+			//Collision en haut
+			if(topCollision(tiles[i]))
+			{
+				physStatus.onCeiling = true;
+				player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+			}
 		}
 	}
-	//player.pos_x = player.hitbox_pos[0] - 5;
-	//player.pos_y = player.hitbox_pos[1] - 10;
 }
 
 /*
@@ -183,13 +200,9 @@ void checkCollision(void){
 bool rightCollision(tile_t tile)
 {
 	if(player.hitbox_pos[0] + player.hitbox_width > tile.pos[0] && player.hitbox_pos[0] < tile.pos[0])
-	{
 		return true;
-	}
 	else
-	{
 		return false;
-	}
 }
 
 /*
@@ -198,13 +211,9 @@ bool rightCollision(tile_t tile)
 bool leftCollision(tile_t tile)
 {
 	if(player.hitbox_pos[0] + player.hitbox_width > tile.pos[0] + tile.width && player.hitbox_pos[0] < tile.pos[0] + tile.width)
-	{
 		return true;
-	}
 	else
-	{
 		return false;
-	}
 }
 
 /*
@@ -213,13 +222,9 @@ bool leftCollision(tile_t tile)
 bool bottomCollision(tile_t tile)
 {
 	if(player.hitbox_pos[1] + player.hitbox_height > tile.pos[1] && player.hitbox_pos[1] < tile.pos[1])
-	{
 		return true;
-	}
 	else
-	{
 		return false;
-	}
 }
 
 /*
@@ -228,13 +233,9 @@ bool bottomCollision(tile_t tile)
 bool topCollision(tile_t tile)
 {
 	if(player.hitbox_pos[1] + player.hitbox_height > tile.pos[1] + tile.height && player.hitbox_pos[1] < tile.pos[1] + tile.height)
-	{
 		return true;
-	}
 	else
-	{
 		return false;
-	}
 }
 
 void shoot(void){
@@ -249,27 +250,53 @@ void damaged(uint8_t dmg){
 	//TODO
 }
 
+void updatePlayerStatus(void){
+	if(physStatus.onGround)
+	{
+		if(player.speed_x == 0)
+			playerStatus = IDLE;
+		else
+			playerStatus = RUN;
+	}
+	else
+	{
+		if(player.speed_y < 0)
+			playerStatus = JUMP;
+		else
+			playerStatus = FALL;
+	}
+	if(physStatus.onCeiling && player.speed_y > 0)
+		physStatus.onCeiling = false;
+	else if(physStatus.onGround && player.speed_y < 0)
+		physStatus.onGround = false;
+	if(physStatus.onRight && player.speed_x > 0)
+		physStatus.onRight = false;
+	else if(physStatus.onLeft && player.speed_x < 0)
+		physStatus.onLeft = false;
+}
+
 /*
  * @brief 	Draw the player
  * @param 	offset: offset of the virtual map
  */
 void drawPlayer(){
-	/*
-	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
-	ILI9341_putImage(player.pos_x, player.pos_y,25,30,getAnim(RUN),750);
-	incrementIndexAnim();
-	*/
 	//Efface l'ancienne image du joueur
-	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
+	//ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
 	//Affiche la nouvelle
 	int16_t posX = player.hitbox_pos[0]-5;
-	int16_t posY = player.hitbox_pos[1]-10;
+	int16_t posY = player.hitbox_pos[1]-5;
 	if(posX < 0 || posY < 0){
 		posX = (posX<0)?0:posX;
 		posY = (posY<0)?0:posY;
 	}
-	ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
-	ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
+	/**/
+	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
+	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus),750);
+	//ILI9341_putImage(posX, posY,25,30, getAnim(RUN),750);
+	//incrementIndexAnim();
+
+	//ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
+	//ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
 	player.prev_pos_x = posX;
 	player.prev_pos_y = posY;
 }
@@ -279,5 +306,6 @@ void drawPlayer(){
  */
 void updatePlayer(void){
 	update_playerMovement();
-	//checkCollision();
+	checkCollision();
+	updatePlayerStatus();
 }
