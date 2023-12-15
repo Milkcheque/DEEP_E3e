@@ -5,4 +5,4 @@ animation.c:1176:10:flipImageY	48	dynamic
 animation.c:1192:10:transformTransparency	1520	static
 animation.c:1206:6:initAnim	4	static
 animation.c:1246:12:getAnim	16	static
-animation.c:1267:13:stateMachine_animation	24	static
+animation.c:1272:13:stateMachine_animation	24	static

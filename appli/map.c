@@ -57,7 +57,7 @@ void initMap(void){
     }
     createTile(40,200,75,15);
     createTile(115,170,30,45);
-    createTile(150,100,75,15);
+    createTile(145,155,75,15);
 }
 
 settings_t * getMapSettings(void){

@@ -94,11 +94,11 @@ void update_playerMovement(void)
  	uint16_t X = (uint16_t)ADC_getValue(ADC_JOYSTICK_X_CHANNEL);
 	if(X < 2000)
 	{
-		player.speed_x = (int16_t)((4095-X)*8/4095);
+		player.speed_x = (int16_t)((4095-X)*6/4095);
 	}
 	else if(X > 2120)
 	{
-		player.speed_x = -(int16_t)(X*8/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
+		player.speed_x = -(int16_t)(X*6/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
 	}
 	else
 	{
@@ -143,7 +143,7 @@ void applyGravity(void){
  */
 void jump(void){
 	cooldown.hasJumped = true;
-	player.speed_y = -18;
+	player.speed_y = -16;
 }
 
 /*
@@ -161,35 +161,122 @@ void checkCollision(void){
 		//Regarde s'il n'y a pas collision
 		if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
 		|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
-		|| (tiles[i].pos[1] >= player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
-		|| (tiles[i].pos[1] + tiles[i].height <= player.hitbox_pos[1]))  		// trop en haut
+		|| (tiles[i].pos[1] > player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
+		|| (tiles[i].pos[1] + tiles[i].height < player.hitbox_pos[1]))  		// trop en haut
 		{}
 		else
 		{
-			//Collision à droite
-			if(rightCollision(tiles[i]))
+			//Collision bas et haut
+			if(bottomCollision(tiles[i]) && topCollision(tiles[i]))
+			{
+				//Collision bas et haut droite -> cas collé à un mur
+				if(rightCollision(tiles[i]))
+				{
+					physStatus.onRight = true;
+					player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+				}
+				//Collision bas et haut gauche
+				else if(leftCollision(tiles[i]))
+				{
+					physStatus.onLeft = true;
+					player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+				}
+				else
+				{
+					physStatus.onGround = true;
+					player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+				}
+			}
+			//Collision bas
+			else if(bottomCollision(tiles[i]))
+			{
+				if(!(player.hitbox_pos[1]+player.hitbox_height == tiles[i].pos[1] 
+				&& (player.hitbox_pos[0]+player.hitbox_width == tiles[i].pos[0] || player.hitbox_pos[0] == tiles[i].pos[0]+tiles[i].width)))	//Vérifie que le joueur n'est pas bloqué à un coin de la tuile
+				{
+					//Collision bas droite -> partie gauche dans le vide
+					if(rightCollision(tiles[i]))
+					{
+						//physStatus.onRight = true;
+						physStatus.onGround = true;
+						//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+					}
+					//collision bas gauche -> partie droite dans le vide
+					else if(leftCollision(tiles[i]))
+					{
+						//physStatus.onLeft = true;
+						physStatus.onGround = true;
+						//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+					}
+					else
+					{
+						physStatus.onGround = true;
+						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+					}
+				}
+			}
+			//collision haut
+			else if(topCollision(tiles[i]))
+			{
+				//Collision haut droite
+				if(rightCollision(tiles[i]))
+				{
+					//physStatus.onRight = true;
+					physStatus.onCeiling = true;
+					//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+				}
+				//collision haut gauche -> partie droite dans le vide
+				else if(leftCollision(tiles[i]))
+				{
+					//physStatus.onLeft = true;
+					physStatus.onCeiling = true;
+					//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+				}
+				else
+				{
+					physStatus.onCeiling = true;
+					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+				}
+			}
+			//Collision droite
+			else if(rightCollision(tiles[i]))
 			{
 				physStatus.onRight = true;
 				player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
 			}
-			//Collision à gauche
+			//Collision gauche
 			else if(leftCollision(tiles[i]))
 			{
 				physStatus.onLeft = true;
 				player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
 			}
-			//Collision en bas
-			if(bottomCollision(tiles[i]))
-			{
-				physStatus.onGround = true;
-				player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height +1;
-			}
-			//Collision en haut
-			if(topCollision(tiles[i]))
-			{
-				physStatus.onCeiling = true;
-				player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
-			}
+			// //Collision à droite
+			// else if(rightCollision(tiles[i]))
+			// {
+			// 	physStatus.onRight = true;
+			// 	player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+			// }
+			// //Collision à gauche
+			// else if(leftCollision(tiles[i]))
+			// {
+			// 	physStatus.onLeft = true;
+			// 	player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+			// }
+			// //Collision en bas
+			// if(bottomCollision(tiles[i]))
+			// {
+			// 	physStatus.onGround = true;
+			// 	player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height ;
+			// }
+			// //Collision en haut
+			// if(topCollision(tiles[i]))
+			// {
+			// 	physStatus.onCeiling = true;
+			// 	player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+			// }
 		}
 	}
 }
@@ -199,7 +286,7 @@ void checkCollision(void){
  */
 bool rightCollision(tile_t tile)
 {
-	if(player.hitbox_pos[0] + player.hitbox_width > tile.pos[0] && player.hitbox_pos[0] < tile.pos[0])
+	if(player.hitbox_pos[0] + player.hitbox_width >= tile.pos[0] && player.hitbox_pos[0] <= tile.pos[0])
 		return true;
 	else
 		return false;
@@ -210,7 +297,7 @@ bool rightCollision(tile_t tile)
  */
 bool leftCollision(tile_t tile)
 {
-	if(player.hitbox_pos[0] + player.hitbox_width > tile.pos[0] + tile.width && player.hitbox_pos[0] < tile.pos[0] + tile.width)
+	if(player.hitbox_pos[0] + player.hitbox_width >= tile.pos[0] + tile.width && player.hitbox_pos[0] <= tile.pos[0] + tile.width)
 		return true;
 	else
 		return false;
@@ -221,7 +308,7 @@ bool leftCollision(tile_t tile)
  */
 bool bottomCollision(tile_t tile)
 {
-	if(player.hitbox_pos[1] + player.hitbox_height > tile.pos[1] && player.hitbox_pos[1] < tile.pos[1])
+	if(player.hitbox_pos[1] + player.hitbox_height >= tile.pos[1] && player.hitbox_pos[1] <= tile.pos[1])
 		return true;
 	else
 		return false;
@@ -232,7 +319,7 @@ bool bottomCollision(tile_t tile)
  */
 bool topCollision(tile_t tile)
 {
-	if(player.hitbox_pos[1] + player.hitbox_height > tile.pos[1] + tile.height && player.hitbox_pos[1] < tile.pos[1] + tile.height)
+	if(player.hitbox_pos[1] + player.hitbox_height >= tile.pos[1] + tile.height && player.hitbox_pos[1] <= tile.pos[1] + tile.height)
 		return true;
 	else
 		return false;
@@ -289,14 +376,15 @@ void drawPlayer(){
 		posX = (posX<0)?0:posX;
 		posY = (posY<0)?0:posY;
 	}
-	/**/
-	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
+	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height-1, ILI9341_COLOR_WHITE);
 	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus),750);
 	//ILI9341_putImage(posX, posY,25,30, getAnim(RUN),750);
 	//incrementIndexAnim();
 
 	//ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
-	//ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
+	//hitbox
+	// ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
+	
 	player.prev_pos_x = posX;
 	player.prev_pos_y = posY;
 }
