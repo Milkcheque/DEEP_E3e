@@ -56,7 +56,7 @@ void initMap(void){
         }
     }
     createTile(40,200,75,15);
-    createTile(115,170,30,45);
+    createTile(115,180,30,45);
     createTile(145,155,75,15);
 }
 

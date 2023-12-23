@@ -30,7 +30,8 @@ appli/main.o: ../appli/main.c ../appli/map.h ../lib/bsp/macro_types.h \
  ../lib/bsp/tft_ili9341/stm32f1_fonts.h \
  ../lib/bsp/tft_ili9341/stm32f1_ili9341.h \
  ../lib/bsp/tft_ili9341/stm32f1_xpt2046.h ../lib/bsp/stm32f1_adc.h \
- ../appli/player.h ../appli/animation.h ../appli/tile.h
+ ../appli/player.h ../appli/animation.h ../appli/tile.h \
+ ../appli/digital_button.h ../appli/pause.h
 
 ../appli/map.h:
 
@@ -151,3 +152,7 @@ appli/main.o: ../appli/main.c ../appli/map.h ../lib/bsp/macro_types.h \
 ../appli/animation.h:
 
 ../appli/tile.h:
+
+../appli/digital_button.h:
+
+../appli/pause.h:

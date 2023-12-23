@@ -1,0 +1,3 @@
+digital_button.c:18:6:button_init	64	static
+digital_button.c:60:6:draw_menuButton	32	static
+digital_button.c:69:6:draw_pauseMenuButtons	48	static

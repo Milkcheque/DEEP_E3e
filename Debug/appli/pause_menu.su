@@ -1,0 +1,3 @@
+pause_menu.c:14:6:get_isLoading	4	static
+pause_menu.c:19:6:set_isLoading	16	static
+pause_menu.c:24:6:checkScreenTouch	16	static

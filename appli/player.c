@@ -4,7 +4,8 @@
  *  Created on: 22 nov. 2023
  *      Author: Arnaud Morillon
  */
-#include <map.h>
+ 
+#include "map.h"
 #include "player.h"
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
@@ -75,11 +76,14 @@ void initPlayer(void)
 	player.hitbox_pos[1] = (int16_t)(player.pos_y + 10);
 	player.hitbox_width = (int8_t)(player.width - 10);
 	player.hitbox_height = (int8_t)(player.height - 5);
+	player.hitbox_pos[1] = (int16_t)(player.pos_y + 10);
+	player.hitbox_width = (int8_t)(player.width);
+	player.hitbox_height = (int8_t)(player.height);
 	//Init physical status
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
 	//Init cooldowns
 	cooldown.hasJumped, cooldown.hasShot = false;
-	cooldown.jumpCD = 100;
+	cooldown.jumpCD = 150;
 	cooldown.shootCD =500;
 	//Init player status
 	playerStatus = IDLE;
@@ -238,7 +242,7 @@ void checkCollision(void){
 				else
 				{
 					physStatus.onCeiling = true;
-					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height+1;
 				}
 			}
 			//Collision droite
@@ -370,8 +374,10 @@ void drawPlayer(){
 	//Efface l'ancienne image du joueur
 	//ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
 	//Affiche la nouvelle
-	int16_t posX = player.hitbox_pos[0]-5;
-	int16_t posY = player.hitbox_pos[1]-5;
+	// int16_t posX = player.hitbox_pos[0]-5;
+	// int16_t posY = player.hitbox_pos[1]-5;
+	int16_t posX = player.hitbox_pos[0];
+	int16_t posY = player.hitbox_pos[1];
 	if(posX < 0 || posY < 0){
 		posX = (posX<0)?0:posX;
 		posY = (posY<0)?0:posY;
