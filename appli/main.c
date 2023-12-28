@@ -143,16 +143,7 @@ int main(void)
 	XPT2046_init();
 
 	while(1){
-		typedef enum
-		{
-			INIT = 0,
-			MENU,
-			PAUSE_MENU,
-			PLAY,
-			LOADING_MENU,
-			LOADING_GAME
-		}state_e;
-
+		// Variable pour l'entrée dans les états
 		static bool entrance = true;
 		// Variables pour la position du toucher tactile
 		int16_t x, y;
@@ -196,7 +187,16 @@ int main(void)
 				}
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
 				{
-					state = LOADING_GAME;
+					if(x < get_pauseMenuButton(0).x + get_pauseMenuButton(0).width && x > get_pauseMenuButton(0).x && y < get_pauseMenuButton(0).y + get_pauseMenuButton(0).height && y > get_pauseMenuButton(0).y)
+					{
+						state = LOADING_GAME;
+					}
+					else if(x < get_pauseMenuButton(1).x + get_pauseMenuButton(1).width && x > get_pauseMenuButton(1).x && y < get_pauseMenuButton(1).y + get_pauseMenuButton(1).height && y > get_pauseMenuButton(1).y)
+					{
+						state = MENU;
+						remove_callbacks();
+						entrance = true;
+					}
 				}
 				break;
 
@@ -206,21 +206,10 @@ int main(void)
 					entrance = false;
 					Systick_add_callback_function(&process_checkTouchForPause_ms);
 				}
-				// if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_BREAK))
-				// if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-				// if(XPT2046_getCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-				// {
-				// 	state = PAUSE_MENU;
-				// 	entrance = true;
-				// }
-				//updatePlayer();
 				break;
 
 			case LOADING_MENU:
-				Systick_remove_callback_function(&process_checkTouchForPause_ms);
-				Systick_remove_callback_function(&process_display_ms);
-				Systick_remove_callback_function(&process_updatePlayer_ms);
-				Systick_remove_callback_function(&process_updateCD_ms);
+				remove_callbacks();
 				entrance = true;
 				state = PAUSE_MENU;
 				break;
@@ -242,17 +231,26 @@ int main(void)
 }
 
 /*
+ * @brief Supprime les fonctions de callback de systick
+ */
+void remove_callbacks(void)
+{
+	Systick_remove_callback_function(&process_checkTouchForPause_ms);
+	Systick_remove_callback_function(&process_display_ms);
+	Systick_remove_callback_function(&process_updatePlayer_ms);
+	Systick_remove_callback_function(&process_updateCD_ms);
+}
+
+/*
  * @brief Affiche les elements du jeu
  */
 void display_update(void)
 {
-	// background
-	// obstacles
-	//drawGround();////////////////////
 	// player
 	drawPlayer();
-	// enemies
-	// bullets 
+	// bullets
+	// drawBullets();
+	// coins
 }
 
 /*

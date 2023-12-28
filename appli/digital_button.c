@@ -55,6 +55,15 @@ void button_init(void)
 }
 
 /*
+ * @brief Retourne le bouton souhaité du menu de pause
+ * @param index : indice du bouton dans le tableau pauseMenu_buttons
+ */
+button_t get_pauseMenuButton(uint8_t index)
+{
+    return pauseMenu_buttons[index];
+}
+
+/*
  * @brief Dessine le bouton du menu principal
  */
 void draw_menuButton(void)

@@ -18,5 +18,6 @@ typedef struct{
 }button_t;
 
 void button_init(void);
+button_t get_pauseMenuButton(uint8_t index);
 void draw_menuButton(void);
 void draw_pauseMenuButtons(void);
