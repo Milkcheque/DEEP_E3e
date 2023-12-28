@@ -76,17 +76,18 @@ void process_updatePlayer_ms(void)
 void process_updateCD_ms(void)
 {
 	static volatile uint16_t t_jumpCD = 0;
-	static volatile uint16_t t_shootCD = 0;
-	static volatile uint16_t t_loadPage = 100;
 	if(getCooldown()->hasJumped){
 		if(t_jumpCD < getCooldown()->jumpCD)
 			t_jumpCD++;
 		else {
+			// getCooldown()->hasJumped = false;
+			getCooldown()->doubleJumpAvailable = true;
 			getCooldown()->hasJumped = false;
 			t_jumpCD = 0;
 		}
 	}
 	/*
+	static volatile uint16_t t_shootCD = 0;
 	if(getCooldown()->hasShot){
 		if(t_shootCD < getCooldown()->shootCD)
 			t_shootCD++;

@@ -70,6 +70,7 @@ void initPlayer(void)
 	player.height = 30;
 	player.speed_x = 0;
 	player.speed_y = 0;
+	player.jumpSpeed = 14;
 	player.health = 50;
 	//Init hitbox
 	player.hitbox_pos[0] = (int16_t)(player.pos_x + 5);
@@ -82,7 +83,7 @@ void initPlayer(void)
 	//Init physical status
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
 	//Init cooldowns
-	cooldown.hasJumped, cooldown.hasShot = false;
+	cooldown.hasJumped, cooldown.jumpAvailable, cooldown.doubleJumpAvailable, cooldown.hasShot = false;
 	cooldown.jumpCD = 150;
 	cooldown.shootCD =500;
 	//Init player status
@@ -94,7 +95,7 @@ void initPlayer(void)
  */
 void update_playerMovement(void)
 {
-	//Déplacement horizontal
+	// Déplacement horizontal
  	uint16_t X = (uint16_t)ADC_getValue(ADC_JOYSTICK_X_CHANNEL);
 	if(X < 2000)
 	{
@@ -108,19 +109,25 @@ void update_playerMovement(void)
 	{
 		player.speed_x = 0;
 	}
+
+	// Déplacement vertical
 	if(!physStatus.onGround)
 		applyGravity();
 	else
+	{
 		player.speed_y = 0;
-
+		// reset des sauts et double sauts
+		cooldown.hasJumped = false;
+		cooldown.hasDoubleJumped = false;
+		cooldown.jumpAvailable = true;
+		cooldown.doubleJumpAvailable = false;
+	}
 	if(player.hitbox_pos[1] + player.hitbox_height > 240)
 		player.hitbox_pos[1] = 240 - player.hitbox_height;
 
 	//Jump
-	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && !cooldown.hasJumped)
-	{
+	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && (cooldown.jumpAvailable || cooldown.doubleJumpAvailable))
 		jump();
-	}
 	player.hitbox_pos[0] += player.speed_x;
 	player.hitbox_pos[1] += player.speed_y;
 
@@ -139,19 +146,28 @@ void update_playerMovement(void)
  * @brief 	Apply gravity to the player
  */
 void applyGravity(void){
-	player.speed_y += 3;
+	player.speed_y += (uint8_t)3;
 }
 
 /*
  * @brief 	Make the player jump when the cooldown is over
  */
 void jump(void){
-	cooldown.hasJumped = true;
-	player.speed_y = -16;
-}
+	if(cooldown.jumpAvailable)
+	{
+		cooldown.hasJumped = true;
+		cooldown.jumpAvailable = false;
+	}
+	else if(cooldown.doubleJumpAvailable)
+	{
+		cooldown.hasDoubleJumped = true;
+		cooldown.doubleJumpAvailable = false;
+	}
+	player.speed_y = -player.jumpSpeed;
+ }
 
 /*
- * @brief 	Vérifie si le joueur est en collision avec une tuile
+ * @brief 	Verifie si le joueur est en collision avec une tuile
  */
 //Regarder https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
 void checkCollision(void){
