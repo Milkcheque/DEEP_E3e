@@ -23,7 +23,6 @@ typedef enum{
 	FALL,
 	LAND,
 	SHOOT,
-	DAMAGED,
 	DEATH
 }playerStatus_e;
 
@@ -32,6 +31,7 @@ typedef struct {
 	bool onCeiling;
 	bool onLeft;
 	bool onRight;
+	bool facingRight;
 }physicalStatus_t;
 
 typedef struct {
@@ -64,6 +64,7 @@ typedef struct {
 void initPlayer(void);
 void setPosPlayer(uint16_t x, uint16_t y);
 player_t * getPlayer(void);
+bool getFacingRight(void);
 cooldown_t * getCooldown(void);
 void update_playerMovement(void);
 void drawPlayer(void);

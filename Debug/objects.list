@@ -1,8 +1,6 @@
 "./appli/animation.o"
 "./appli/assembleur.o"
 "./appli/digital_button.o"
-"./appli/foo.o"
-"./appli/joystick.o"
 "./appli/main.o"
 "./appli/map.o"
 "./appli/pause.o"

@@ -1,2 +1,2 @@
 map.c:45:6:initMap	16	static
-map.c:63:14:getMapSettings	4	static
+map.c:64:14:getMapSettings	4	static

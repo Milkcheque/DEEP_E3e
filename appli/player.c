@@ -59,6 +59,15 @@ void setPosPlayer(uint16_t x, uint16_t y)
 }
 
 /*
+ * @brief 	Getter for the player orientation
+ * @retval 	physicalStatus_t
+ */
+bool getFacingRight(void)
+{
+	return physStatus.facingRight;
+}
+
+/*
  * @brief 	Initialise les attributs du joueurs
  */
 void initPlayer(void)
@@ -82,6 +91,7 @@ void initPlayer(void)
 	player.hitbox_height = (int8_t)(player.height);
 	//Init physical status
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
+	physStatus.facingRight = true;
 	//Init cooldowns
 	cooldown.hasJumped, cooldown.jumpAvailable, cooldown.doubleJumpAvailable, cooldown.hasShot = false;
 	cooldown.jumpCD = 150;
@@ -100,10 +110,12 @@ void update_playerMovement(void)
 	if(X < 2000)
 	{
 		player.speed_x = (int16_t)((4095-X)*6/4095);
+		physStatus.facingRight = true;
 	}
 	else if(X > 2120)
 	{
-		player.speed_x = -(int16_t)(X*6/4095);	//FAUDRAIT PAS METTRE CA DANS joystick.c ?????
+		player.speed_x = -(int16_t)(X*6/4095);
+		physStatus.facingRight = false;
 	}
 	else
 	{
@@ -135,7 +147,7 @@ void update_playerMovement(void)
 	if(player.hitbox_pos[0] < 5)
 		player.hitbox_pos[0] = 5;
 	else if(player.hitbox_pos[0] + player.hitbox_width > getMapSettings()->width-5)
-		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour �viter une d�formation de l'image
+		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour eviter une deformation de l'image
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
 	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
@@ -353,10 +365,6 @@ void death(void){
 	//TODO
 }
 
-void damaged(uint8_t dmg){
-	//TODO
-}
-
 void updatePlayerStatus(void){
 	if(physStatus.onGround)
 	{
@@ -399,7 +407,7 @@ void drawPlayer(){
 		posY = (posY<0)?0:posY;
 	}
 	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height-1, ILI9341_COLOR_WHITE);
-	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus),750);
+	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus, physStatus.facingRight),750);
 	//ILI9341_putImage(posX, posY,25,30, getAnim(RUN),750);
 	//incrementIndexAnim();
 

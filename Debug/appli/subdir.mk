@@ -7,8 +7,6 @@
 C_SRCS += \
 ../appli/animation.c \
 ../appli/digital_button.c \
-../appli/foo.c \
-../appli/joystick.c \
 ../appli/main.c \
 ../appli/map.c \
 ../appli/pause.c \
@@ -22,8 +20,6 @@ OBJS += \
 ./appli/animation.o \
 ./appli/assembleur.o \
 ./appli/digital_button.o \
-./appli/foo.o \
-./appli/joystick.o \
 ./appli/main.o \
 ./appli/map.o \
 ./appli/pause.o \
@@ -36,8 +32,6 @@ S_UPPER_DEPS += \
 C_DEPS += \
 ./appli/animation.d \
 ./appli/digital_button.d \
-./appli/foo.d \
-./appli/joystick.d \
 ./appli/main.d \
 ./appli/map.d \
 ./appli/pause.d \
