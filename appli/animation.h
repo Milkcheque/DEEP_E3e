@@ -11,7 +11,7 @@
 #define ANIMATION_H_
 
 void initAnim(void);
-void incrementIndexAnim(void);
+uint8_t getIndexAnim(void);
 uint16_t transformTransparency(uint16_t * image);
 uint16_t * getAnim(playerStatus_e animation);
 uint16_t *  stateMachine_animation(playerStatus_e state, bool facingRight);

@@ -48,6 +48,15 @@ cooldown_t * getCooldown(void)
 }
 
 /*
+ * @brief 	Getter for the player orientation
+ * @retval 	physicalStatus_t
+ */
+bool getFacingRight(void)
+{
+	return physStatus.facingRight;
+}
+
+/*
  * @brief 	Set the position of the player
  * @param 	x: x position
  * @param 	y: y position
@@ -59,12 +68,12 @@ void setPosPlayer(uint16_t x, uint16_t y)
 }
 
 /*
- * @brief 	Getter for the player orientation
- * @retval 	physicalStatus_t
+ * @brief 	Set the player status for the animation
+ * @param 	state: playerStatus_e
  */
-bool getFacingRight(void)
+void setPlayerStatus(playerStatus_e state)
 {
-	return physStatus.facingRight;
+	playerStatus = state;
 }
 
 /*
@@ -137,17 +146,17 @@ void update_playerMovement(void)
 	if(player.hitbox_pos[1] + player.hitbox_height > 240)
 		player.hitbox_pos[1] = 240 - player.hitbox_height;
 
-	//Jump
+	// Jump
 	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && (cooldown.jumpAvailable || cooldown.doubleJumpAvailable))
 		jump();
 	player.hitbox_pos[0] += player.speed_x;
 	player.hitbox_pos[1] += player.speed_y;
 
-	//Limites
+	// Limites de l'écran
 	if(player.hitbox_pos[0] < 5)
 		player.hitbox_pos[0] = 5;
 	else if(player.hitbox_pos[0] + player.hitbox_width > getMapSettings()->width-5)
-		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour eviter une deformation de l'image
+		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour eviter une deformation de l'animation du joueur
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
 	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
@@ -158,13 +167,14 @@ void update_playerMovement(void)
  * @brief 	Apply gravity to the player
  */
 void applyGravity(void){
-	player.speed_y += (uint8_t)3;
+	player.speed_y += 3;
 }
 
 /*
  * @brief 	Make the player jump when the cooldown is over
  */
-void jump(void){
+void jump(void)
+{
 	if(cooldown.jumpAvailable)
 	{
 		cooldown.hasJumped = true;
@@ -182,7 +192,8 @@ void jump(void){
  * @brief 	Verifie si le joueur est en collision avec une tuile
  */
 //Regarder https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
-void checkCollision(void){
+void checkCollision(void)
+{
 	tile_t * tiles = getTiles();
 	physStatus.onGround = false;
 	physStatus.onCeiling = false;
@@ -365,13 +376,29 @@ void death(void){
 	//TODO
 }
 
+/*
+ * @brief 	Update the player status for the animation
+ */
 void updatePlayerStatus(void){
 	if(physStatus.onGround)
 	{
-		if(player.speed_x == 0)
-			playerStatus = IDLE;
+		if(playerStatus == LAND)
+		{
+			// Coupe l'animation LAND quand le joueur se déplace sur x pour que ce soit plus fluide
+			if(getIndexAnim() > 2 && player.speed_x != 0)
+				playerStatus = RUN;
+			else
+				playerStatus = LAND;
+		}
+		else if(playerStatus == FALL)
+			playerStatus = LAND;
 		else
-			playerStatus = RUN;
+		{
+			if(player.speed_x == 0)
+				playerStatus = IDLE;
+			else
+				playerStatus = RUN;
+		}
 	}
 	else
 	{
@@ -414,7 +441,7 @@ void drawPlayer(){
 	//ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
 	//hitbox
 	// ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
-	
+
 	player.prev_pos_x = posX;
 	player.prev_pos_y = posY;
 }

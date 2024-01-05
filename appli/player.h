@@ -63,6 +63,7 @@ typedef struct {
 
 void initPlayer(void);
 void setPosPlayer(uint16_t x, uint16_t y);
+void setPlayerStatus(playerStatus_e state);
 player_t * getPlayer(void);
 bool getFacingRight(void);
 cooldown_t * getCooldown(void);
