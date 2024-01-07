@@ -23,7 +23,6 @@ typedef enum{
 	FALL,
 	LAND,
 	SHOOT,
-	DEATH
 }playerStatus_e;
 
 typedef struct {

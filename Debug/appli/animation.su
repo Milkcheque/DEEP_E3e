@@ -1,7 +1,7 @@
 animation.c:23:6:setIndexAnim	16	static
 animation.c:31:9:getIndexAnim	4	static
-animation.c:1319:12:flipImage	48	dynamic
-animation.c:1349:10:transformTransparency	1520	static
-animation.c:1363:6:initAnim	4	static
-animation.c:1404:12:getAnim	16	static
-animation.c:1431:12:stateMachine_animation	24	static
+animation.c:1268:12:flipImage	48	dynamic
+animation.c:1298:10:transformTransparency	1520	static
+animation.c:1312:6:initAnim	4	static
+animation.c:1352:12:getAnim	16	static
+animation.c:1379:12:stateMachine_animation	24	static

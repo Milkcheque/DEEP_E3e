@@ -1,5 +1,6 @@
-appli/player.o: ../appli/player.c ../appli/map.h ../lib/bsp/macro_types.h \
- ../appli/player.h ../lib/bsp/stm32f1_adc.h ../appli/config.h \
+appli/player.o: ../appli/player.c ../appli/player.h \
+ ../lib/bsp/macro_types.h ../appli/map.h ../appli/main.h \
+ ../lib/bsp/stm32f1_adc.h ../appli/config.h \
  ../lib/hal/inc/stm32f1xx_hal.h ../lib/hal/inc/stm32f1xx_hal_conf.h \
  ../lib/hal/inc/stm32f1xx_hal_rcc.h ../lib/hal/inc/stm32f1xx_hal_def.h \
  ../lib/CMSIS/device/stm32f1xx.h ../lib/CMSIS/device/stm32f103xb.h \
@@ -29,11 +30,13 @@ appli/player.o: ../appli/player.c ../appli/map.h ../lib/bsp/macro_types.h \
  ../lib/bsp/tft_ili9341/stm32f1_fonts.h ../appli/tile.h \
  ../appli/animation.h
 
-../appli/map.h:
+../appli/player.h:
 
 ../lib/bsp/macro_types.h:
 
-../appli/player.h:
+../appli/map.h:
+
+../appli/main.h:
 
 ../lib/bsp/stm32f1_adc.h:
 

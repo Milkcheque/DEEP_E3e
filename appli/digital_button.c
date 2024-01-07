@@ -18,7 +18,7 @@ static button_t play_button;
 void button_init(void)
 {
     //Initialisation menu principal
-    sprintf(play_button.text,"PLAY");
+    sprintf(play_button.text,"JOUER");
     //Calcul de la taille du texte
     ILI9341_GetStringSize(play_button.text, &Font_7x10, &play_button.fontWidth, &play_button.fontHeight);
     play_button.bigger = 4;
@@ -37,8 +37,8 @@ void button_init(void)
         .y = 140,
         .width = 140,
         .height = 90,
-        .bigger = 3,
-        .text = "RESUME"
+        .bigger = 2,
+        .text = "REPRENDRE"
     };
 
     //initialisation bouton EXIT
@@ -47,8 +47,8 @@ void button_init(void)
         .y = 140,
         .width = 140,
         .height = 90,
-        .bigger = 3,
-        .text = "EXIT"
+        .bigger = 2,
+        .text = "QUITTER"
     };
     pauseMenu_buttons[0] = resume_button;
     pauseMenu_buttons[1] = exit_button;

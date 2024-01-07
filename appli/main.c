@@ -7,7 +7,8 @@
   ******************************************************************************
 */
 
-#include <map.h>
+#include "main.h"
+#include "map.h"
 #include "stm32f1xx_hal.h"
 #include "stm32f1_uart.h"
 #include "stm32f1_sys.h"
@@ -26,20 +27,23 @@
 
 // #define GPIO_PIN_BP_BREAK	GPIO_PIN_10
 
-typedef enum
-{
-	INIT = 0,
-	MENU,
-	PAUSE_MENU,
-	PLAY,
-	LOADING_MENU,
-	LOADING_GAME
-}state_e;
+// typedef enum
+// {
+// 	INIT = 0,
+// 	MENU,
+// 	PAUSE_MENU,
+// 	PLAY,
+// 	DEATH,
+// 	LOADING_MENU,
+// 	LOADING_GAME,
+// 	LOADING_DEATH,
+// 	SCORE_MENU
+// }state_e;
 
 static state_e state = MENU;
 
 void display_update(void);
-void set_state(state_e new_state);
+// void set_state(state_e new_state);
 
 /*
  * @brief Met à jour l'affichage
@@ -141,12 +145,14 @@ int main(void)
 	ILI9341_Init();
 	ILI9341_Rotate(ILI9341_Orientation_Landscape_2);
 	ILI9341_Fill(ILI9341_COLOR_WHITE);
+
 	//initialisation du tactile
 	XPT2046_init();
 
 	while(1){
 		// Variable pour l'entrée dans les états
 		static bool entrance = true;
+
 		// Variables pour la position du toucher tactile
 		int16_t x, y;
 
@@ -167,9 +173,11 @@ int main(void)
 					ILI9341_Fill(ILI9341_COLOR_WHITE);
 					button_init();
 					draw_menuButton();
+
 					//Affiche le titre "Platformer"
-					ILI9341_PutBigs(20, 30, "Platformer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 4, 4);
+					ILI9341_PutBigs(20, 40, "Platformer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 4, 4);
 				}
+
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
 				{
 					state = INIT;
@@ -184,15 +192,18 @@ int main(void)
 					ILI9341_Fill(ILI9341_COLOR_WHITE);
 					button_init();
 					draw_pauseMenuButtons();
+
 					//Affiche le titre "Platformer"
 					ILI9341_PutBigs(35, 40, "jeu en pause", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 3, 3);
 				}
+
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
 				{
 					if(x < get_pauseMenuButton(0).x + get_pauseMenuButton(0).width && x > get_pauseMenuButton(0).x && y < get_pauseMenuButton(0).y + get_pauseMenuButton(0).height && y > get_pauseMenuButton(0).y)
 					{
 						state = LOADING_GAME;
 					}
+
 					else if(x < get_pauseMenuButton(1).x + get_pauseMenuButton(1).width && x > get_pauseMenuButton(1).x && y < get_pauseMenuButton(1).y + get_pauseMenuButton(1).height && y > get_pauseMenuButton(1).y)
 					{
 						state = MENU;
@@ -224,6 +235,44 @@ int main(void)
 				Systick_add_callback_function(&process_updateCD_ms);
 				entrance = true;
 				state = PLAY;
+				break;
+
+			case LOADING_DEATH:
+				remove_callbacks();
+				entrance = true;
+				state = DEATH;
+				break;
+
+			case DEATH:
+				if(entrance)
+				{
+					entrance = false;
+					ILI9341_Fill(ILI9341_COLOR_WHITE);
+					ILI9341_PutBigs(35, 105, "Chute fatale", &Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE, 3, 3);
+					ILI9341_PutBigs(95, 190, "Continuer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
+				}
+
+				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+				{
+					state = SCORE_MENU;
+					entrance = true;
+				}
+				break;
+
+			case SCORE_MENU: 
+				if(entrance)
+				{
+					entrance = false;
+					ILI9341_Fill(ILI9341_COLOR_WHITE);
+					ILI9341_PutBigs(105, 40, "Score", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 3, 3);
+					ILI9341_PutBigs(60, 190, "Menu principal", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
+				}
+
+				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+				{
+					state = MENU;
+					entrance = true;
+				}
 				break;
 
 			default:

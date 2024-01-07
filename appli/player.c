@@ -5,8 +5,9 @@
  *      Author: Arnaud Morillon
  */
  
-#include "map.h"
 #include "player.h"
+#include "map.h"
+#include "main.h"
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
 #include "tile.h"
@@ -137,14 +138,12 @@ void update_playerMovement(void)
 	else
 	{
 		player.speed_y = 0;
-		// reset des sauts et double sauts
+		// Reset des sauts et double sauts
 		cooldown.hasJumped = false;
 		cooldown.hasDoubleJumped = false;
 		cooldown.jumpAvailable = true;
 		cooldown.doubleJumpAvailable = false;
 	}
-	if(player.hitbox_pos[1] + player.hitbox_height > 240)
-		player.hitbox_pos[1] = 240 - player.hitbox_height;
 
 	// Jump
 	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && (cooldown.jumpAvailable || cooldown.doubleJumpAvailable))
@@ -160,13 +159,15 @@ void update_playerMovement(void)
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
 	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
-		player.hitbox_pos[1] = getMapSettings()->height - player.hitbox_height;
+		death();
+		// player.hitbox_pos[1] = getMapSettings()->height - player.hitbox_height;
 } 
 
 /*
  * @brief 	Apply gravity to the player
  */
-void applyGravity(void){
+void applyGravity(void)
+{
 	player.speed_y += 3;
 }
 
@@ -368,23 +369,26 @@ bool topCollision(tile_t tile)
 		return false;
 }
 
-void shoot(void){
+void shoot(void)
+{
 	//TODO
 }
 
-void death(void){
-	//TODO
+void death(void)
+{
+	set_state(LOADING_DEATH);
 }
 
 /*
  * @brief 	Update the player status for the animation
  */
-void updatePlayerStatus(void){
+void updatePlayerStatus(void)
+{
 	if(physStatus.onGround)
 	{
 		if(playerStatus == LAND)
 		{
-			// Coupe l'animation LAND quand le joueur se déplace sur x pour que ce soit plus fluide
+			// Coupe l'animation LAND quand le joueur se déplace en x pour que ce soit plus fluide
 			if(getIndexAnim() > 2 && player.speed_x != 0)
 				playerStatus = RUN;
 			else
@@ -421,26 +425,24 @@ void updatePlayerStatus(void){
  * @brief 	Draw the player
  * @param 	offset: offset of the virtual map
  */
-void drawPlayer(){
-	//Efface l'ancienne image du joueur
-	//ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height, ILI9341_COLOR_WHITE);
-	//Affiche la nouvelle
+void drawPlayer()
+{
 	// int16_t posX = player.hitbox_pos[0]-5;
 	// int16_t posY = player.hitbox_pos[1]-5;
+
 	int16_t posX = player.hitbox_pos[0];
 	int16_t posY = player.hitbox_pos[1];
-	if(posX < 0 || posY < 0){
+
+	if(posX < 0 || posY < 0)
+	{
 		posX = (posX<0)?0:posX;
 		posY = (posY<0)?0:posY;
 	}
-	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height-1, ILI9341_COLOR_WHITE);
-	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus, physStatus.facingRight),750);
-	//ILI9341_putImage(posX, posY,25,30, getAnim(RUN),750);
-	//incrementIndexAnim();
 
-	//ILI9341_DrawFilledRectangle(posX, posY, posX + player.width, posY + player.height, ILI9341_COLOR_BLUE);
-	//hitbox
-	// ILI9341_DrawFilledRectangle(player.hitbox_pos[0], player.hitbox_pos[1], player.hitbox_pos[0] + player.hitbox_width, player.hitbox_pos[1] + player.hitbox_height, ILI9341_COLOR_RED);
+	// Efface l'image precedente du joueur
+	ILI9341_DrawFilledRectangle(player.prev_pos_x, player.prev_pos_y, player.prev_pos_x + player.width, player.prev_pos_y + player.height-1, ILI9341_COLOR_WHITE);
+	// Affiche la nouvelle
+	ILI9341_putImage(posX, posY,25,30, stateMachine_animation(playerStatus, physStatus.facingRight),750);
 
 	player.prev_pos_x = posX;
 	player.prev_pos_y = posY;
@@ -449,7 +451,8 @@ void drawPlayer(){
 /*
  * @brief 	Update the player
  */
-void updatePlayer(void){
+void updatePlayer(void)
+{
 	update_playerMovement();
 	checkCollision();
 	updatePlayerStatus();

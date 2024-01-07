@@ -1444,12 +1444,6 @@ uint16_t * stateMachine_animation(playerStatus_e state, bool facingRight)
 			indexAnim = 0;
 			break;
 
-		case DEATH:
-		//TODO
-			anim = idle[0];
-			indexAnim = 0;
-			break;
-
 		default:
 			anim = idle[0];
 			indexAnim = 0;
