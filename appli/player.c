@@ -10,11 +10,11 @@
 #include "main.h"
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
-#include "tile.h"
+// #include "tile.h"
 #include "animation.h"
 
 #define ADC_JOYSTICK_X_CHANNEL	ADC_1
-#define ADC_JOYSTICK_Y_CHANNEL	ADC_0	//sont invers�s intentionnellement pour avoir le d�placement sur le bon axe
+#define ADC_JOYSTICK_Y_CHANNEL	ADC_0	//sont inverses intentionnellement pour avoir le deplacement sur le bon axe
 #define GPIO_PIN_BP_JUMP		GPIO_PIN_8
 
 void jump(void);
@@ -159,6 +159,7 @@ void update_playerMovement(void)
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
 	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
+		//TODO Modifier car ne prend pas en compte les tuiles
 		death();
 		// player.hitbox_pos[1] = getMapSettings()->height - player.hitbox_height;
 } 
@@ -200,58 +201,32 @@ void checkCollision(void)
 	physStatus.onCeiling = false;
 	physStatus.onLeft = false;
 	physStatus.onRight = false;
-	for(uint8_t i=0; i<=getIndexTile(); i++)
+	for(uint8_t i=0; i< *getLevelSize(); i++)
 	{
-		//Regarde s'il n'y a pas collision
-		if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
-		|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
-		|| (tiles[i].pos[1] > player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
-		|| (tiles[i].pos[1] + tiles[i].height < player.hitbox_pos[1]))  		// trop en haut
-		{}
-		else
+		if(tiles[i].role == OBSTACLE)
 		{
-			//Collision bas et haut
-			if(bottomCollision(tiles[i]) && topCollision(tiles[i]))
+			//Regarde s'il n'y a pas collision
+			if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
+			|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
+			|| (tiles[i].pos[1] > player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
+			|| (tiles[i].pos[1] + tiles[i].height < player.hitbox_pos[1]))  		// trop en haut
+			{}
+			else
 			{
-				//Collision bas et haut droite -> cas collé à un mur
-				if(rightCollision(tiles[i]))
+				//Collision bas et haut
+				if(bottomCollision(tiles[i]) && topCollision(tiles[i]))
 				{
-					physStatus.onRight = true;
-					player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
-				}
-				//Collision bas et haut gauche
-				else if(leftCollision(tiles[i]))
-				{
-					physStatus.onLeft = true;
-					player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-				}
-				else
-				{
-					physStatus.onGround = true;
-					player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
-				}
-			}
-			//Collision bas
-			else if(bottomCollision(tiles[i]))
-			{
-				if(!(player.hitbox_pos[1]+player.hitbox_height == tiles[i].pos[1] 
-				&& (player.hitbox_pos[0]+player.hitbox_width == tiles[i].pos[0] || player.hitbox_pos[0] == tiles[i].pos[0]+tiles[i].width)))	//Vérifie que le joueur n'est pas bloqué à un coin de la tuile
-				{
-					//Collision bas droite -> partie gauche dans le vide
+					//Collision bas et haut droite -> cas collé à un mur
 					if(rightCollision(tiles[i]))
 					{
-						//physStatus.onRight = true;
-						physStatus.onGround = true;
-						//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
-						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+						physStatus.onRight = true;
+						player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
 					}
-					//collision bas gauche -> partie droite dans le vide
+					//Collision bas et haut gauche
 					else if(leftCollision(tiles[i]))
 					{
-						//physStatus.onLeft = true;
-						physStatus.onGround = true;
-						//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+						physStatus.onLeft = true;
+						player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
 					}
 					else
 					{
@@ -259,68 +234,73 @@ void checkCollision(void)
 						player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
 					}
 				}
-			}
-			//collision haut
-			else if(topCollision(tiles[i]))
-			{
-				//Collision haut droite
-				if(rightCollision(tiles[i]))
+				//Collision bas
+				else if(bottomCollision(tiles[i]))
 				{
-					//physStatus.onRight = true;
-					physStatus.onCeiling = true;
-					//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
-					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+					if(!(player.hitbox_pos[1]+player.hitbox_height == tiles[i].pos[1] 
+					&& (player.hitbox_pos[0]+player.hitbox_width == tiles[i].pos[0] || player.hitbox_pos[0] == tiles[i].pos[0]+tiles[i].width)))	//Vérifie que le joueur n'est pas bloqué à un coin de la tuile
+					{
+						//Collision bas droite -> partie gauche dans le vide
+						if(rightCollision(tiles[i]))
+						{
+							//physStatus.onRight = true;
+							physStatus.onGround = true;
+							//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+							player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+						}
+						//collision bas gauche -> partie droite dans le vide
+						else if(leftCollision(tiles[i]))
+						{
+							//physStatus.onLeft = true;
+							physStatus.onGround = true;
+							//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+							player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+						}
+						else
+						{
+							physStatus.onGround = true;
+							player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height;
+						}
+					}
 				}
-				//collision haut gauche -> partie droite dans le vide
+				//collision haut
+				else if(topCollision(tiles[i]))
+				{
+					//Collision haut droite
+					if(rightCollision(tiles[i]))
+					{
+						//physStatus.onRight = true;
+						physStatus.onCeiling = true;
+						//player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+						player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+					}
+					//collision haut gauche -> partie droite dans le vide
+					else if(leftCollision(tiles[i]))
+					{
+						//physStatus.onLeft = true;
+						physStatus.onCeiling = true;
+						//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
+						player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
+					}
+					else
+					{
+						physStatus.onCeiling = true;
+						player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height+1;
+					}
+				}
+				//Collision droite
+				else if(rightCollision(tiles[i]))
+				{
+					physStatus.onRight = true;
+					player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
+				}
+				//Collision gauche
 				else if(leftCollision(tiles[i]))
 				{
-					//physStatus.onLeft = true;
-					physStatus.onCeiling = true;
-					//player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
-				}
-				else
-				{
-					physStatus.onCeiling = true;
-					player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height+1;
+					physStatus.onLeft = true;
+					player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
 				}
 			}
-			//Collision droite
-			else if(rightCollision(tiles[i]))
-			{
-				physStatus.onRight = true;
-				player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
-			}
-			//Collision gauche
-			else if(leftCollision(tiles[i]))
-			{
-				physStatus.onLeft = true;
-				player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-			}
-			// //Collision à droite
-			// else if(rightCollision(tiles[i]))
-			// {
-			// 	physStatus.onRight = true;
-			// 	player.hitbox_pos[0] = tiles[i].pos[0] - player.hitbox_width;
-			// }
-			// //Collision à gauche
-			// else if(leftCollision(tiles[i]))
-			// {
-			// 	physStatus.onLeft = true;
-			// 	player.hitbox_pos[0] = tiles[i].pos[0] + tiles[i].width;
-			// }
-			// //Collision en bas
-			// if(bottomCollision(tiles[i]))
-			// {
-			// 	physStatus.onGround = true;
-			// 	player.hitbox_pos[1] = tiles[i].pos[1] - player.hitbox_height ;
-			// }
-			// //Collision en haut
-			// if(topCollision(tiles[i]))
-			// {
-			// 	physStatus.onCeiling = true;
-			// 	player.hitbox_pos[1] = tiles[i].pos[1] + tiles[i].height;
-			// }
 		}
 	}
 }
@@ -367,11 +347,6 @@ bool topCollision(tile_t tile)
 		return true;
 	else
 		return false;
-}
-
-void shoot(void)
-{
-	//TODO
 }
 
 void death(void)

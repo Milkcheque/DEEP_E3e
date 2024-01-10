@@ -21,7 +21,6 @@
 #include "stm32f1_adc.h"
 #include "player.h"
 #include "animation.h"
-#include "tile.h"
 #include "digital_button.h"
 #include "pause.h"
 
@@ -150,7 +149,7 @@ int main(void)
 	XPT2046_init();
 
 	while(1){
-		// Variable pour l'entrée dans les états
+		// Variable pour l'entree dans les etats
 		static bool entrance = true;
 
 		// Variables pour la position du toucher tactile
@@ -229,7 +228,7 @@ int main(void)
 
 			case LOADING_GAME:
 				ILI9341_Fill(ILI9341_COLOR_WHITE);
-				drawGround();
+				drawMap();
 				Systick_add_callback_function(&process_display_ms);
 				Systick_add_callback_function(&process_updatePlayer_ms);
 				Systick_add_callback_function(&process_updateCD_ms);
@@ -248,7 +247,7 @@ int main(void)
 				{
 					entrance = false;
 					ILI9341_Fill(ILI9341_COLOR_WHITE);
-					ILI9341_PutBigs(35, 105, "Chute fatale", &Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE, 3, 3);
+					ILI9341_PutBigs(35, 100, "Chute fatale", &Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE, 3, 3);
 					ILI9341_PutBigs(95, 190, "Continuer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
 				}
 
@@ -299,8 +298,7 @@ void display_update(void)
 {
 	// player
 	drawPlayer();
-	// bullets
-	// drawBullets();
+	
 	// coins
 }
 

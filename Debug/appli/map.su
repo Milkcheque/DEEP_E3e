@@ -1,2 +1,5 @@
-map.c:45:6:initMap	16	static
-map.c:64:14:getMapSettings	4	static
+map.c:40:14:getMapSettings	4	static
+map.c:49:10:getTiles	4	static
+map.c:58:11:getLevelSize	4	static
+map.c:66:6:initMap	24	static
+map.c:103:6:drawMap	40	static
