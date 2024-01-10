@@ -83,23 +83,29 @@ void process_updateCD_ms(void)
 		if(t_jumpCD < getCooldown()->jumpCD)
 			t_jumpCD++;
 		else {
-			// getCooldown()->hasJumped = false;
 			getCooldown()->doubleJumpAvailable = true;
 			getCooldown()->hasJumped = false;
 			t_jumpCD = 0;
 		}
 	}
-	/*
-	static volatile uint16_t t_shootCD = 0;
-	if(getCooldown()->hasShot){
-		if(t_shootCD < getCooldown()->shootCD)
-			t_shootCD++;
+	static volatile uint16_t t_dashCD = 0;
+	if(getCooldown()->hasDashed){
+		if(t_dashCD < getCooldown()->dashCD)
+			t_dashCD++;
 		else {
-			getCooldown()->hasShot = false;
-			t_shootCD = 0;
+			getCooldown()->hasDashed = false;
+			t_dashCD = 0;
 		}
 	}
-	*/
+	else if(getCooldown()->isDashing){
+		if(t_dashCD < getCooldown()->dashCD)
+			t_dashCD += 16;
+		else {
+			getCooldown()->hasDashed = true;
+			getCooldown()->isDashing = false;
+			t_dashCD = 0;
+		}
+	}
 }
 
 /*

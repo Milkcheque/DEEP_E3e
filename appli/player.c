@@ -16,6 +16,7 @@
 #define ADC_JOYSTICK_X_CHANNEL	ADC_1
 #define ADC_JOYSTICK_Y_CHANNEL	ADC_0	//sont inverses intentionnellement pour avoir le deplacement sur le bon axe
 #define GPIO_PIN_BP_JUMP		GPIO_PIN_8
+#define GPIO_PIN_BP_DASH		GPIO_PIN_9
 
 void jump(void);
 void applyGravity(void);
@@ -89,7 +90,8 @@ void initPlayer(void)
 	player.height = 30;
 	player.speed_x = 0;
 	player.speed_y = 0;
-	player.jumpSpeed = 14;
+	player.jumpSpeed = 13;
+	player.dashSpeed = 22;
 	player.health = 50;
 	//Init hitbox
 	player.hitbox_pos[0] = (int16_t)(player.pos_x + 5);
@@ -103,9 +105,9 @@ void initPlayer(void)
 	physStatus.onGround, physStatus.onCeiling, physStatus.onLeft, physStatus.onRight = false;
 	physStatus.facingRight = true;
 	//Init cooldowns
-	cooldown.hasJumped, cooldown.jumpAvailable, cooldown.doubleJumpAvailable, cooldown.hasShot = false;
+	cooldown.hasJumped, cooldown.jumpAvailable, cooldown.doubleJumpAvailable, cooldown.hasDashed, cooldown.isDashing = false;
 	cooldown.jumpCD = 150;
-	cooldown.shootCD =500;
+	cooldown.dashCD =1000;
 	//Init player status
 	playerStatus = IDLE;
 }
@@ -148,6 +150,11 @@ void update_playerMovement(void)
 	// Jump
 	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_JUMP) && (cooldown.jumpAvailable || cooldown.doubleJumpAvailable))
 		jump();
+
+	// Dash
+	if((!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_BP_DASH) && !cooldown.hasDashed) || cooldown.isDashing)
+		dash();
+
 	player.hitbox_pos[0] += player.speed_x;
 	player.hitbox_pos[1] += player.speed_y;
 
@@ -158,10 +165,11 @@ void update_playerMovement(void)
 		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour eviter une deformation de l'animation du joueur
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
-	else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
+	/*else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
 		//TODO Modifier car ne prend pas en compte les tuiles
 		death();
 		// player.hitbox_pos[1] = getMapSettings()->height - player.hitbox_height;
+	*/
 } 
 
 /*
@@ -189,6 +197,29 @@ void jump(void)
 	}
 	player.speed_y = -player.jumpSpeed;
  }
+
+/*
+ * @brief 	Make the player jump when the cooldown is over
+ */
+void dash(void)
+{
+	// cooldown.hasDashed = true;
+	cooldown.isDashing = true;
+	if(getFacingRight())
+		player.speed_x = player.dashSpeed;
+	else
+		player.speed_x = -player.dashSpeed;
+	player.speed_y = 0;
+ }
+
+/*
+ * @brief	Fonction de fin de partie
+ */
+void checkDeath(void)
+{
+	if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height && !physStatus.onGround)
+		set_state(LOADING_DEATH);
+}
 
 /*
  * @brief 	Verifie si le joueur est en collision avec une tuile
@@ -349,11 +380,6 @@ bool topCollision(tile_t tile)
 		return false;
 }
 
-void death(void)
-{
-	set_state(LOADING_DEATH);
-}
-
 /*
  * @brief 	Update the player status for the animation
  */
@@ -431,4 +457,5 @@ void updatePlayer(void)
 	update_playerMovement();
 	checkCollision();
 	updatePlayerStatus();
+	checkDeath();
 }

@@ -44,6 +44,7 @@ typedef struct {
 	int8_t speed_x;
 	int8_t speed_y;
 	int8_t jumpSpeed;
+	int8_t dashSpeed;
 	int8_t health;
 	int16_t hitbox_pos[2];
 	int8_t hitbox_width;
@@ -56,8 +57,9 @@ typedef struct {
 	bool doubleJumpAvailable;
 	bool hasDoubleJumped;
 	uint16_t jumpCD;
-	bool hasShot;
-	uint16_t shootCD;
+	bool hasDashed;
+	bool isDashing;
+	uint16_t dashCD;
 } cooldown_t;
 
 void initPlayer(void);
