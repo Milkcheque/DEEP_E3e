@@ -92,9 +92,9 @@
 	#if USE_SCREEN_TFT_ILI9341
 		#define USE_XPT2046			1	//Tactile
 
-		#define USE_FONT11x18		0
+		#define USE_FONT11x18		1
 		#define USE_FONT7x10		1
-		#define USE_FONT16x26		0
+		#define USE_FONT16x26		1
 
 		#if BLUEPILL					//D�finition des broches CS, WRX et RST pour la BLUEPILL
 			#define ILI9341_CS_PORT       GPIOB

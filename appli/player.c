@@ -10,7 +10,6 @@
 #include "main.h"
 #include "stm32f1_adc.h"
 #include "stm32f1_ili9341.h"
-// #include "tile.h"
 #include "animation.h"
 
 #define ADC_JOYSTICK_X_CHANNEL	ADC_1
@@ -90,7 +89,7 @@ void initPlayer(void)
 	player.height = 30;
 	player.speed_x = 0;
 	player.speed_y = 0;
-	player.jumpSpeed = 13;
+	player.jumpSpeed = 10;
 	player.dashSpeed = 22;
 	player.health = 50;
 	//Init hitbox
@@ -119,12 +118,12 @@ void update_playerMovement(void)
 {
 	// Déplacement horizontal
  	uint16_t X = (uint16_t)ADC_getValue(ADC_JOYSTICK_X_CHANNEL);
-	if(X < 2000)
+	if(X < 2030)
 	{
 		player.speed_x = (int16_t)((4095-X)*6/4095);
 		physStatus.facingRight = true;
 	}
-	else if(X > 2120)
+	else if(X > 2112)
 	{
 		player.speed_x = -(int16_t)(X*6/4095);
 		physStatus.facingRight = false;
@@ -177,7 +176,7 @@ void update_playerMovement(void)
  */
 void applyGravity(void)
 {
-	player.speed_y += 3;
+	player.speed_y += 2;
 }
 
 /*
@@ -380,6 +379,28 @@ bool topCollision(tile_t tile)
 		return false;
 }
 
+bool checkEndingPointCollision(void)
+{
+	tile_t * tiles = getTiles();
+	for(uint8_t i=0; i< *getLevelSize(); i++)
+	{
+		if(tiles[i].role == ENDING_POINT)
+		{
+			//Regarde s'il n'y a pas collision
+			if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
+			|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
+			|| (tiles[i].pos[1] > player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
+			|| (tiles[i].pos[1] + tiles[i].height < player.hitbox_pos[1]))  		// trop en haut
+			{}
+			else
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 /*
  * @brief 	Update the player status for the animation
  */
@@ -424,9 +445,8 @@ void updatePlayerStatus(void)
 
 /*
  * @brief 	Draw the player
- * @param 	offset: offset of the virtual map
  */
-void drawPlayer()
+void drawPlayer(void)
 {
 	// int16_t posX = player.hitbox_pos[0]-5;
 	// int16_t posY = player.hitbox_pos[1]-5;
@@ -457,5 +477,7 @@ void updatePlayer(void)
 	update_playerMovement();
 	checkCollision();
 	updatePlayerStatus();
+	if(checkEndingPointCollision())
+		set_state(LOADING_WIN);
 	checkDeath();
 }

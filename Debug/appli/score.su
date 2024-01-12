@@ -1,0 +1,4 @@
+score.c:18:6:incrementChrono	4	static
+score.c:26:7:resetChrono	4	static
+score.c:34:6:drawChrono_inGame	32	static
+score.c:47:6:drawChrono_scoreboard	40	static

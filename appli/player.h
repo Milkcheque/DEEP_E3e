@@ -71,5 +71,6 @@ cooldown_t * getCooldown(void);
 void update_playerMovement(void);
 void drawPlayer(void);
 void updatePlayer(void);
+bool checkEndingPointCollision(void);
 
 #endif /* PLAYER_H_ */

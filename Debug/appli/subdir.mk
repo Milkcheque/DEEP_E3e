@@ -11,6 +11,7 @@ C_SRCS += \
 ../appli/map.c \
 ../appli/pause.c \
 ../appli/player.c \
+../appli/score.c \
 ../appli/tile.c 
 
 S_UPPER_SRCS += \
@@ -24,6 +25,7 @@ OBJS += \
 ./appli/map.o \
 ./appli/pause.o \
 ./appli/player.o \
+./appli/score.o \
 ./appli/tile.o 
 
 S_UPPER_DEPS += \
@@ -36,6 +38,7 @@ C_DEPS += \
 ./appli/map.d \
 ./appli/pause.d \
 ./appli/player.d \
+./appli/score.d \
 ./appli/tile.d 
 
 

@@ -5,6 +5,7 @@
 "./appli/map.o"
 "./appli/pause.o"
 "./appli/player.o"
+"./appli/score.o"
 "./appli/tile.o"
 "./lib/bsp/APDS9960/apds9960.o"
 "./lib/bsp/APDS9960/apds9960_algo_color.o"
