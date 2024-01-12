@@ -11,9 +11,6 @@
 #ifndef VIRTUAL_MAP_H_
 #define VIRTUAL_MAP_H_
 
-//ILI9341_WIDTH = 240 dispo dans ili9341.h ATTENTION WIDTH ET HEIGHT SONT INVERSES
-//ILI9341_HEIGHT = 320
-
 typedef struct{
     uint16_t width;
     uint16_t height;
@@ -22,6 +19,10 @@ typedef struct{
 void initMap(void);
 tile_t * getTiles(void);
 uint8_t * getLevelSize(void);
+uint8_t getIndexLevel(void);
+uint8_t getNbLevels(void);
+void nextLevel(void);
+void resetLevel(void);
 settings_t * getMapSettings(void);
 void drawMap(void);
 

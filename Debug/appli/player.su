@@ -17,4 +17,4 @@ player.c:374:6:topCollision	24	static
 player.c:382:6:checkEndingPointCollision	16	static
 player.c:407:6:updatePlayerStatus	8	static
 player.c:449:6:drawPlayer	32	static
-player.c:475:6:updatePlayer	8	static
+player.c:475:6:updatePlayer	16	static

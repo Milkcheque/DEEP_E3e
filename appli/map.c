@@ -10,7 +10,6 @@
 #include "player.h"
 #include "stm32f1_ili9341.h"
 
-settings_t settings;
 
 const tile_t level1[15] = {
         {0, 0, {40, 180}, STARTING_POINT},
@@ -48,8 +47,12 @@ const tile_t level2[15] = {
         {5, 47, {315, 193}, OBSTACLE},
 };
 
-static const tile_t * current_level = level1;
-static uint8_t current_level_size = 15;
+static uint8_t index_currentLevel = 0;
+static uint8_t level_size = 15;
+
+static const tile_t * levels[2];
+
+settings_t settings;
 
 /*
  * @brief   getter pour les paramètres de la map
@@ -60,13 +63,29 @@ settings_t * getMapSettings(void)
     return &settings;
 }
 
+void resetLevel(void)
+{
+    index_currentLevel = 0;
+}
+
+uint8_t getNbLevels(void)
+{
+    return 2;
+}
+
+uint8_t getIndexLevel(void)  
+{
+    return index_currentLevel;
+
+}
+
 /*
  * @brief 	Getter for the tiles
  * @retval 	tile_t
  */
 tile_t * getTiles(void)
 {
-    return current_level;
+    return levels[index_currentLevel];
 }
 
 /*
@@ -75,7 +94,15 @@ tile_t * getTiles(void)
  */
 uint8_t * getLevelSize(void)
 {
-    return &current_level_size;
+    return &level_size;
+}
+
+/*
+ * @brief 	Passe au niveau suivant
+ */
+void nextLevel(void)
+{
+    index_currentLevel++;
 }
 
 /*
@@ -84,16 +111,15 @@ uint8_t * getLevelSize(void)
 void initMap(void){
     settings.width = 320;
     settings.height = 240;
+
+	levels[0] = &level1;
+	levels[1] = &level2;
+    
     tile_t element;
-    for(uint8_t i=0; i<current_level_size; i++){
-    	element = current_level[i];
-        /*
-        if(element.role == OBSTACLE){
-            createTile(element.pos, element.width, element.height, element.role);
-        }
-        else*/ if(element.role == STARTING_POINT){
+    for(uint8_t i=0; i<level_size; i++){
+    	element = levels[index_currentLevel][i];
+        if(element.role == STARTING_POINT)
             setPosPlayer(element.pos[0], element.pos[1]);
-        }
     }
 
     /*
@@ -119,8 +145,8 @@ void initMap(void){
  * @brief 	Affiche toutes les tuiles du niveaux
  */
 void drawMap(void){
-    for(uint16_t i=0; i<current_level_size; i++){
-        tile_t tile = current_level[i];
+    for(uint16_t i=0; i<level_size; i++){
+        tile_t tile = levels[index_currentLevel][i];
         if(tile.role == OBSTACLE)
             ILI9341_DrawFilledRectangle(tile.pos[0], tile.pos[1], tile.pos[0]+tile.width, tile.pos[1]+tile.height, ILI9341_COLOR_BLACK);
 

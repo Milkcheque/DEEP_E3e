@@ -183,6 +183,7 @@ int main(void)
 					ILI9341_PutBigs(20, 40, "Platformer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 4, 4);
 					
 					resetChrono();
+					resetLevel();
 				}
 
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
@@ -243,6 +244,11 @@ int main(void)
 				Systick_add_callback_function(&process_updateCD_ms);
 				entrance = true;
 				state = PLAY;
+				break;
+			
+			case LOADING_NEXT_LEVEL:
+				remove_callbacks();
+				state = INIT;
 				break;
 
 			case LOADING_DEATH:

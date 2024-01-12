@@ -478,6 +478,12 @@ void updatePlayer(void)
 	checkCollision();
 	updatePlayerStatus();
 	if(checkEndingPointCollision())
-		set_state(LOADING_WIN);
+		if(getIndexLevel() < getNbLevels()-1)
+		{
+			nextLevel();
+			set_state(LOADING_NEXT_LEVEL);
+		}
+		else
+			set_state(LOADING_WIN);
 	checkDeath();
 }
