@@ -36,7 +36,7 @@ const tile_t level2[15] = {
         {75, 20, {0, 43}, OBSTACLE},
         {59, 25, {85, 110}, OBSTACLE},
         {28, 30, {0, 180}, OBSTACLE},
-        {12, 184, {133, 0}, OBSTACLE},
+        {18, 184, {133, 0}, OBSTACLE},
         {25, 23, {135, 58}, OBSTACLE},
         {24, 23, {135, 161}, OBSTACLE},
         {50, 35, {120, 230}, OBSTACLE},
