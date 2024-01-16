@@ -1,3 +1,0 @@
-tile.c:19:9:getIndexTile	4	static
-tile.c:23:6:initTiles	4	static
-tile.c:35:6:createTile	32	static

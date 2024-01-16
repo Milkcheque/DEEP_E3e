@@ -106,7 +106,7 @@ void initPlayer(void)
 	//Init cooldowns
 	cooldown.hasJumped, cooldown.jumpAvailable, cooldown.doubleJumpAvailable, cooldown.hasDashed, cooldown.isDashing = false;
 	cooldown.jumpCD = 150;
-	cooldown.dashCD =1000;
+	cooldown.dashCD =800;
 	//Init player status
 	playerStatus = IDLE;
 }
@@ -164,11 +164,6 @@ void update_playerMovement(void)
 		player.hitbox_pos[0] = getMapSettings()->width -5 - player.hitbox_width;	// -5 pour eviter une deformation de l'animation du joueur
 	if(player.hitbox_pos[1] < 0)
 		player.hitbox_pos[1] = 0;
-	/*else if(player.hitbox_pos[1] + player.hitbox_height > getMapSettings()->height)
-		//TODO Modifier car ne prend pas en compte les tuiles
-		death();
-		// player.hitbox_pos[1] = getMapSettings()->height - player.hitbox_height;
-	*/
 } 
 
 /*
@@ -202,7 +197,6 @@ void jump(void)
  */
 void dash(void)
 {
-	// cooldown.hasDashed = true;
 	cooldown.isDashing = true;
 	if(getFacingRight())
 		player.speed_x = player.dashSpeed;
@@ -223,7 +217,6 @@ void checkDeath(void)
 /*
  * @brief 	Verifie si le joueur est en collision avec une tuile
  */
-//Regarder https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
 void checkCollision(void)
 {
 	tile_t * tiles = getTiles();
@@ -235,7 +228,7 @@ void checkCollision(void)
 	{
 		if(tiles[i].role == OBSTACLE)
 		{
-			//Regarde s'il n'y a pas collision
+			//Regarde s'il n'y a pas collision	=> code pris de https://jeux.developpez.com/tutoriels/theorie-des-collisions/formes-2d-simples/
 			if((tiles[i].pos[0] >= player.hitbox_pos[0] + player.hitbox_width)    	// trop à droite
 			|| (tiles[i].pos[0] + tiles[i].width <= player.hitbox_pos[0]) 			// trop à gauche
 			|| (tiles[i].pos[1] > player.hitbox_pos[1] + player.hitbox_height)		// trop en bas
@@ -379,6 +372,9 @@ bool topCollision(tile_t tile)
 		return false;
 }
 
+/*
+ * @brief 	Verifie si le joueur est en collision avec le point de fin pour finir le niveau
+ */
 bool checkEndingPointCollision(void)
 {
 	tile_t * tiles = getTiles();
@@ -448,9 +444,6 @@ void updatePlayerStatus(void)
  */
 void drawPlayer(void)
 {
-	// int16_t posX = player.hitbox_pos[0]-5;
-	// int16_t posY = player.hitbox_pos[1]-5;
-
 	int16_t posX = player.hitbox_pos[0];
 	int16_t posY = player.hitbox_pos[1];
 

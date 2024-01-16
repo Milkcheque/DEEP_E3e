@@ -17,8 +17,7 @@
 	LOADING_GAME,
 	LOADING_NEXT_LEVEL,
 	LOADING_DEATH,
-	LOADING_WIN,
-	SCORE_MENU
+	LOADING_WIN
 }state_e;
 
 void set_state(state_e new_state);

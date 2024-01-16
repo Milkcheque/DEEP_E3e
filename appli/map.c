@@ -63,16 +63,27 @@ settings_t * getMapSettings(void)
     return &settings;
 }
 
+/*
+ * @brief 	Met le niveau 0 comme niveau actuel
+ */
 void resetLevel(void)
 {
     index_currentLevel = 0;
 }
 
+/*
+* @brief 	Getter pour le nombre de niveaux
+* @retval 	uint8_t
+*/
 uint8_t getNbLevels(void)
 {
     return 2;
 }
 
+/*
+* @brief 	Getter pour l'index du niveau actuel
+* @retval 	uint8_t
+*/
 uint8_t getIndexLevel(void)  
 {
     return index_currentLevel;
@@ -121,23 +132,6 @@ void initMap(void){
         if(element.role == STARTING_POINT)
             setPosPlayer(element.pos[0], element.pos[1]);
     }
-
-    /*
-    for(uint16_t y=0; y<settings.height/10; y++){
-        for(uint16_t x=0; x<settings.width/10; x++){
-            if(map[y][x] == 1){
-                //createTile(x*10,y*10,10,10);
-            }
-            else if(map[y][x] == 5){
-                setPosPlayer(x*10, y*10);
-            }
-        }
-    }
-    createTile(40,200,75,15);
-    createTile(115,180,30,45);
-    createTile(145,155,120,15);
-    createTile(90,155,25,15);
-    */
 }
 
 

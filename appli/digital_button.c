@@ -82,6 +82,4 @@ void draw_pauseMenuButtons(void)
         ILI9341_DrawFilledRectangle(pauseMenu_buttons[i].x, pauseMenu_buttons[i].y, pauseMenu_buttons[i].x + pauseMenu_buttons[i].width, pauseMenu_buttons[i].y + pauseMenu_buttons[i].height, 0x2222);
         ILI9341_PutBigs(pauseMenu_buttons[i].x + 5, pauseMenu_buttons[i].y + 30, pauseMenu_buttons[i].text, &Font_7x10, ILI9341_COLOR_WHITE, 0x2222, pauseMenu_buttons[i].bigger, pauseMenu_buttons[i].bigger);
     }
-    // ILI9341_PutBigs(15, 150, "PLAY", &Font_11x18, ILI9341_COLOR_WHITE, 0x2222, 3, 3);
-    // ILI9341_PutBigs(180, 150, "EXIT", &Font_11x18, ILI9341_COLOR_WHITE, 0x2222, 3, 3);
 }

@@ -22,11 +22,11 @@
 #include "player.h"
 #include "animation.h"
 #include "digital_button.h"
-#include "pause.h"
 #include "score.h"
 
 static state_e state = MENU;
 void display_update(void);
+bool_e checkScreenTouch(void);
 
 
 /*
@@ -59,7 +59,7 @@ void process_display_ms(void)
 }
 
 /*
- * @brief Met à jour la position du joueur
+ * @brief Met à jour le joueur
  */
 void process_updatePlayer_ms(void)
 {
@@ -74,7 +74,6 @@ void process_updatePlayer_ms(void)
 
 /*
  * @brief Met à jour les cooldowns du joueur
- * @note 	la variable t_loadPage permet d'attendre entre les différents états du jeu  
  */
 void process_updateCD_ms(void)
 {
@@ -109,7 +108,7 @@ void process_updateCD_ms(void)
 }
 
 /*
- * @brief Met à jour la position du joueur
+ * @brief Verifie si l'ecran est touché pour mettre le jeu en pause
  */
 void process_checkTouchForPause_ms(void)
 {
@@ -125,6 +124,9 @@ void process_checkTouchForPause_ms(void)
 	}
 }
 
+/*
+ * @brief Fonction principale
+ */
 int main(void)
 {
 	//Initialisation de la couche logicielle HAL (Hardware Abstraction Layer)
@@ -200,8 +202,6 @@ int main(void)
 					ILI9341_Fill(ILI9341_COLOR_WHITE);
 					button_init();
 					draw_pauseMenuButtons();
-
-					//Affiche le titre "Platformer"
 					ILI9341_PutBigs(35, 40, "jeu en pause", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 3, 3);
 				}
 
@@ -269,10 +269,9 @@ int main(void)
 					entrance = false;
 					ILI9341_Fill(ILI9341_COLOR_WHITE);
 					ILI9341_PutBigs(35, 20, "Chute fatale", &Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE, 3, 3);
-					// ILI9341_PutBigs(95, 190, "Continuer", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
 					ILI9341_PutBigs(105, 90, "Score", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 3, 3);
 					drawChrono_scoreboard(0);
-					ILI9341_PutBigs(60, 200, "Menu principal", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
+					ILI9341_PutBigs(30, 200, "< Menu principal >", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
 				}
 
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
@@ -290,7 +289,7 @@ int main(void)
 					ILI9341_PutBigs(45, 30, "Victoire !!", &Font_7x10, ILI9341_COLOR_BLUE, ILI9341_COLOR_WHITE, 3, 3);
 					ILI9341_PutBigs(105, 90, "Score", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 3, 3);
 					drawChrono_scoreboard(1);
-					ILI9341_PutBigs(30, 200, "< Menu principal >", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);	// 60
+					ILI9341_PutBigs(30, 200, "< Menu principal >", &Font_7x10, 0x2222, ILI9341_COLOR_WHITE, 2, 2);
 				}
 
 				if(XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
@@ -307,7 +306,7 @@ int main(void)
 }
 
 /*
- * @brief Supprime les fonctions de callback de systick
+ * @brief Supprime les fonctions du callback de systick
  */
 void remove_callbacks(void)
 {
@@ -323,8 +322,16 @@ void remove_callbacks(void)
  */
 void display_update(void)
 {
-	// player
 	drawPlayer();
+}
+
+bool_e checkScreenTouch(void)
+{
+    uint8_t x, y;
+    if(XPT2046_getCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+        return 1;
+    else
+        return 0;
 }
 
 /*

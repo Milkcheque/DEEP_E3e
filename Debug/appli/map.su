@@ -1,9 +1,9 @@
 map.c:61:14:getMapSettings	4	static
-map.c:66:6:resetLevel	4	static
-map.c:71:9:getNbLevels	4	static
-map.c:76:9:getIndexLevel	4	static
-map.c:86:10:getTiles	4	static
-map.c:95:11:getLevelSize	4	static
-map.c:103:6:nextLevel	4	static
-map.c:111:6:initMap	24	static
-map.c:147:6:drawMap	40	static
+map.c:69:6:resetLevel	4	static
+map.c:78:9:getNbLevels	4	static
+map.c:87:9:getIndexLevel	4	static
+map.c:97:10:getTiles	4	static
+map.c:106:11:getLevelSize	4	static
+map.c:114:6:nextLevel	4	static
+map.c:122:6:initMap	24	static
+map.c:141:6:drawMap	40	static

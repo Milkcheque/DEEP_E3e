@@ -1,5 +1,5 @@
 appli/player.o: ../appli/player.c ../appli/player.h \
- ../lib/bsp/macro_types.h ../appli/map.h ../appli/tile.h ../appli/main.h \
+ ../lib/bsp/macro_types.h ../appli/map.h ../appli/main.h \
  ../lib/bsp/stm32f1_adc.h ../appli/config.h \
  ../lib/hal/inc/stm32f1xx_hal.h ../lib/hal/inc/stm32f1xx_hal_conf.h \
  ../lib/hal/inc/stm32f1xx_hal_rcc.h ../lib/hal/inc/stm32f1xx_hal_def.h \
@@ -34,8 +34,6 @@ appli/player.o: ../appli/player.c ../appli/player.h \
 ../lib/bsp/macro_types.h:
 
 ../appli/map.h:
-
-../appli/tile.h:
 
 ../appli/main.h:
 

@@ -1258,52 +1258,22 @@ const uint16_t land7[750] = {
 	0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff
 };
 
-// POUR LIBERER LA MEMOIRE 	--> free(variable);
-
 /*
- * @brief Flip l'image par rapport à l'axe vertical
+ * @brief Oriente l'image en miroir par rapport à l'axe vertical
  * @param image pointeur de l'image à flipper, width largeur de l'image, height hauteur de l'image
  * @retval newImg l'image retournee en miroir
  */
 uint16_t * flipImage(uint16_t * image, int width, int height) {
-	static uint16_t normalImg[25*30];
-	static uint16_t bigImg[35*30];
+	static uint16_t img[25*30];
 	uint16_t newImg[width*height];
     for (uint8_t y = 0; y < height; y++) {
         for(uint8_t x = 0; x < width; x++) {
-			newImg[y * width + x] = image[y * width + (width - 1 - x)];
+			img[y * width + x] = image[y * width + (width - 1 - x)];
 		}
     }
-	if(width == 25)
-	{
-		for(uint16_t i=0; i< width*height; i++)
-			normalImg[i] = newImg[i];
-		return &normalImg;
-	}
-	// Taille plus grande pour l'animation SHOOT
-	else if(width >= 30)
-	{
-		for(uint16_t i=0; i< width*height; i++)
-			bigImg[i] = newImg[i];
-		return &bigImg;
-	}
-	return &normalImg;
-}
-
-/* 
- * @brief Remplace le fond de l'image par de la transparence avec le background
- * @param img le pointeur de l'image à transformer
- * @retval image l'image transformée
- */
-uint16_t transformTransparency(uint16_t * img){
-	uint16_t image[750];
-	for(int i = 0; i < 750; i++){
-		if(img[i] == 0x07e0)
-			image[i] = 0xffff; //Mettre couleur/pixel de l'image de fond
-		else
-			image[i] = img[i];
-	}
-	return image;
+	// for(uint16_t i=0; i< width*height; i++)
+	// 	normalImg[i] = newImg[i];
+	return &img;
 }
 
 /*
@@ -1337,37 +1307,6 @@ void initAnim(){
 	land[5] = &land5;
 	land[6] = &land6;
 	land[7] = &land7;
-
-	/*
-	shoot[0];
-	death[0];
-	*/
-}
-
-/*
- * @brief Renvoie le pointeur de l'animation voulue
- * @param animation recherchee
- * @retval pointeur vers l'image de l'animation
- */
-uint16_t * getAnim(playerStatus_e animation){
-	if(animation == RUN)
-		return run[indexAnim];
-	/*
-	if(animation == IDLE)
-		return &idle[indexAnim];
-	if(animation == JUMP)
-		return &jump[indexAnim];
-	if(animation == FALL)
-		return &fall[indexAnim];
-	if(animation == SHOOT)
-		return &shoot[indexAnim];
-	if(animation == DAMAGED)
-		return &damaged[indexAnim];
-	if(animation == DEATH)
-		return &death[indexAnim];
-	*/
-	else
-		return idle[0];
 }
 
 /*

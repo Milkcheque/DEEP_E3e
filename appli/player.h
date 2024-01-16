@@ -11,8 +11,6 @@
 #include <stdbool.h>
 #include "macro_types.h"
 
-//extern
-
 /*
  * @brief 	Etats du joueur pour les animations et les machines à etats
  */

@@ -54,7 +54,6 @@ void drawChrono_scoreboard(bool_e hasWon)
             ILI9341_printf(130, 130, &Font_16x26, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE, "%d:0%d", minutes, secondes);
         else
             ILI9341_printf(130, 130, &Font_16x26, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE, "%d:%d", minutes, secondes);
-            // ILI9341_PutBigs(35, 100, "Chute fatale", &Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE, 3, 3);
     }
     else
         ILI9341_printf(117, 130, &Font_16x26, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE, "--:--");
