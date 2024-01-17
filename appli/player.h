@@ -1,8 +1,8 @@
 /*
- * player.h
- *
- *  Created on: 22 nov. 2023
- *      Author: Arnaud Morillon
+ * @file player.h
+ * @author Arnaud Morillon
+ * @date 22 nov. 2023
+ * @brief Contient toutes les variables qui concernent directement le joueur
  */
 
 #ifndef PLAYER_H_

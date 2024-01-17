@@ -1,9 +1,11 @@
-/*
- * player.c
- *
- *  Created on: 22 nov. 2023
- *      Author: Arnaud Morillon
- */
+/**
+  ******************************************************************************
+  * @file    player.c
+  * @author  Arnaud Morillon
+  * @date    November-2023
+  * @brief   Contient tout ce qui concerne directement le joueur : des variables aux fonctions pour le d�placer, afficher, v�rifier les collisions
+  ******************************************************************************
+*/
  
 #include "player.h"
 #include "map.h"
@@ -30,7 +32,7 @@ static physicalStatus_t physStatus;
 static playerStatus_e playerStatus;
 static cooldown_t cooldown;
 
-/*
+/**
  * @brief 	Getter for player attributes
  * @retval 	player_t
  */
@@ -39,7 +41,7 @@ player_t * getPlayer(void)
 	return &player;
 }
 
-/*
+/**
  * @brief 	Getter for the cooldowns of the player
  * @retval 	cooldown_t
  */
@@ -48,7 +50,7 @@ cooldown_t * getCooldown(void)
 	return &cooldown;
 }
 
-/*
+/**
  * @brief 	Getter for the player orientation
  * @retval 	physicalStatus_t
  */
@@ -57,7 +59,7 @@ bool getFacingRight(void)
 	return physStatus.facingRight;
 }
 
-/*
+/**
  * @brief 	Set the position of the player
  * @param 	x: x position
  * @param 	y: y position
@@ -68,7 +70,7 @@ void setPosPlayer(uint16_t x, uint16_t y)
 	player.pos_y = y;
 }
 
-/*
+/**
  * @brief 	Set the player status for the animation
  * @param 	state: playerStatus_e
  */
@@ -77,7 +79,7 @@ void setPlayerStatus(playerStatus_e state)
 	playerStatus = state;
 }
 
-/*
+/**
  * @brief 	Initialise les attributs du joueurs
  */
 void initPlayer(void)
@@ -111,7 +113,7 @@ void initPlayer(void)
 	playerStatus = IDLE;
 }
 
-/*
+/**
  * @brief 	Method to update player position
  */
 void update_playerMovement(void)
@@ -166,7 +168,7 @@ void update_playerMovement(void)
 		player.hitbox_pos[1] = 0;
 } 
 
-/*
+/**
  * @brief 	Apply gravity to the player
  */
 void applyGravity(void)
@@ -174,7 +176,7 @@ void applyGravity(void)
 	player.speed_y += 2;
 }
 
-/*
+/**
  * @brief 	Make the player jump when the cooldown is over
  */
 void jump(void)
@@ -192,7 +194,7 @@ void jump(void)
 	player.speed_y = -player.jumpSpeed;
  }
 
-/*
+/**
  * @brief 	Make the player jump when the cooldown is over
  */
 void dash(void)
@@ -205,7 +207,7 @@ void dash(void)
 	player.speed_y = 0;
  }
 
-/*
+/**
  * @brief	Fonction de fin de partie
  */
 void checkDeath(void)
@@ -214,7 +216,7 @@ void checkDeath(void)
 		set_state(LOADING_DEATH);
 }
 
-/*
+/**
  * @brief 	Verifie si le joueur est en collision avec une tuile
  */
 void checkCollision(void)
@@ -328,7 +330,7 @@ void checkCollision(void)
 	}
 }
 
-/*
+/**
  * @brief 	Vérifie si le joueur est en collision avec une tuile sur sa droite
  */
 bool rightCollision(tile_t tile)
@@ -339,7 +341,7 @@ bool rightCollision(tile_t tile)
 		return false;
 }
 
-/*
+/**
  * @brief 	Vérifie si le joueur est en collision avec une tuile sur sa gauche
  */
 bool leftCollision(tile_t tile)
@@ -350,7 +352,7 @@ bool leftCollision(tile_t tile)
 		return false;
 }
 
-/*
+/**
  * @brief 	Vérifie si le joueur est en collision avec une tuile en dessous de lui
  */
 bool bottomCollision(tile_t tile)
@@ -361,7 +363,7 @@ bool bottomCollision(tile_t tile)
 		return false;
 }
 
-/*
+/**
  * @brief 	Vérifie si le joueur est en collision avec une tuile au dessus de lui
  */
 bool topCollision(tile_t tile)
@@ -372,7 +374,7 @@ bool topCollision(tile_t tile)
 		return false;
 }
 
-/*
+/**
  * @brief 	Verifie si le joueur est en collision avec le point de fin pour finir le niveau
  */
 bool checkEndingPointCollision(void)
@@ -397,7 +399,7 @@ bool checkEndingPointCollision(void)
 	return false;
 }
 
-/*
+/**
  * @brief 	Update the player status for the animation
  */
 void updatePlayerStatus(void)
@@ -439,7 +441,7 @@ void updatePlayerStatus(void)
 		physStatus.onLeft = false;
 }
 
-/*
+/**
  * @brief 	Draw the player
  */
 void drawPlayer(void)
@@ -462,7 +464,7 @@ void drawPlayer(void)
 	player.prev_pos_y = posY;
 }
 
-/*
+/**
  * @brief 	Update the player
  */
 void updatePlayer(void)

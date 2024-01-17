@@ -1,9 +1,12 @@
-/*
- * image.c
- *
- *  Created on: 26 nov. 2023
- *      Author: Arnaud Morillon
- */
+/**
+  ******************************************************************************
+  * @file    animation.c
+  * @author  Arnaud Morillon
+  * @date    November-2023
+  * @brief   Contient toutes les images de toutes les animations du joueur sous forme de tableaux de pixels. Il permet de gérer les images à afficher et de les orienter dans le sens inverse si besoin.
+  ******************************************************************************
+*/
+
 #include "animation.h"
 #include "player.h"
 #include "macro_types.h"
@@ -17,14 +20,14 @@ static uint16_t * land[8];
 static uint16_t * shoot[10];
 static uint16_t * death[10];
 
-/*
+/**
  * @brief set l'indice d'animation
  */
 void setIndexAnim(uint8_t index){
 	indexAnim = index;
 }
 
-/*
+/**
  * @brief get l'indice d'animation
  * @retval indexAnim
  */
@@ -1258,7 +1261,7 @@ const uint16_t land7[750] = {
 	0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff
 };
 
-/*
+/**
  * @brief Oriente l'image en miroir par rapport Ã  l'axe vertical
  * @param image pointeur de l'image Ã  flipper, width largeur de l'image, height hauteur de l'image
  * @retval newImg l'image retournee en miroir
@@ -1276,7 +1279,7 @@ uint16_t * flipImage(uint16_t * image, int width, int height) {
 	return &img;
 }
 
-/*
+/**
  * @brief Initialise les animations dans des tableaux
  */
 void initAnim(){
@@ -1309,7 +1312,7 @@ void initAnim(){
 	land[7] = &land7;
 }
 
-/*
+/**
  * @brief Renvoie le pointeur de l'animation voulue
  * @param animation recherchee
  * @param facingRight orientation du personnage

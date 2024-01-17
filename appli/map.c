@@ -1,9 +1,11 @@
-/*
- * virtual_map.c
- *
- *  Created on: 30 nov. 2023
- *      Author: Arnaud Morillon
- */
+/**
+  ******************************************************************************
+  * @file    map.c
+  * @author  Arnaud Morillon
+  * @date    November-2023
+  * @brief   GËre le level design de chaque niveau, c est-‡-dire l emplacement de chaque obstacle, le point d apparition du joueur et le point de fin de niveau que doit atteindre le joueur.
+  ******************************************************************************
+*/
 
 #include "map.h"
 #include "macro_types.h"
@@ -54,7 +56,7 @@ static const tile_t * levels[2];
 
 settings_t settings;
 
-/*
+/**
  * @brief   getter pour les param√®tres de la map
  * @retval 	settings_t
  */
@@ -63,7 +65,7 @@ settings_t * getMapSettings(void)
     return &settings;
 }
 
-/*
+/**
  * @brief 	Met le niveau 0 comme niveau actuel
  */
 void resetLevel(void)
@@ -71,7 +73,7 @@ void resetLevel(void)
     index_currentLevel = 0;
 }
 
-/*
+/**
 * @brief 	Getter pour le nombre de niveaux
 * @retval 	uint8_t
 */
@@ -80,7 +82,7 @@ uint8_t getNbLevels(void)
     return 2;
 }
 
-/*
+/**
 * @brief 	Getter pour l'index du niveau actuel
 * @retval 	uint8_t
 */
@@ -90,7 +92,7 @@ uint8_t getIndexLevel(void)
 
 }
 
-/*
+/**
  * @brief 	Getter for the tiles
  * @retval 	tile_t
  */
@@ -99,7 +101,7 @@ tile_t * getTiles(void)
     return levels[index_currentLevel];
 }
 
-/*
+/**
  * @brief 	Getter du nombre de tuiles
  * @retval 	uint8_t
  */
@@ -108,7 +110,7 @@ uint8_t * getLevelSize(void)
     return &level_size;
 }
 
-/*
+/**
  * @brief 	Passe au niveau suivant
  */
 void nextLevel(void)
@@ -116,7 +118,7 @@ void nextLevel(void)
     index_currentLevel++;
 }
 
-/*
+/**
  * @brief 	Initialize the map
  */
 void initMap(void){
@@ -135,7 +137,7 @@ void initMap(void){
 }
 
 
-/*
+/**
  * @brief 	Affiche toutes les tuiles du niveaux
  */
 void drawMap(void){

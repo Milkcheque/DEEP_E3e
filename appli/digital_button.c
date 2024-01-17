@@ -1,9 +1,11 @@
-/*
- * digital_button.c
- *
- *  Created on: 20 dec. 2023
- *      Author: Arnaud Morillon
- */
+/**
+  ******************************************************************************
+  * @file    digital_button.c
+  * @author  Arnaud Morillon
+  * @date    December-2023
+  * @brief   GËre les boutons tactiles du menu principal et du menu de pause.
+  ******************************************************************************
+*/
 
 #include "digital_button.h"
 #include "stm32f1_fonts.h"
@@ -12,7 +14,7 @@
 static button_t pauseMenu_buttons[2];
 static button_t play_button;
 
-/*
+/**
  * @brief Initialise les boutons
  */
 void button_init(void)
@@ -54,7 +56,7 @@ void button_init(void)
     pauseMenu_buttons[1] = exit_button;
 }
 
-/*
+/**
  * @brief Retourne le bouton souhait√© du menu de pause
  * @param index : indice du bouton dans le tableau pauseMenu_buttons
  */
@@ -63,7 +65,7 @@ button_t get_pauseMenuButton(uint8_t index)
     return pauseMenu_buttons[index];
 }
 
-/*
+/**
  * @brief Dessine le bouton du menu principal
  */
 void draw_menuButton(void)
@@ -72,7 +74,7 @@ void draw_menuButton(void)
     ILI9341_PutBigs(play_button.x + 20, play_button.y + 30, play_button.text, &Font_7x10, ILI9341_COLOR_WHITE, 0x2222, play_button.bigger, play_button.bigger);
 }
 
-/*
+/**
  * @brief Dessine les boutons du menu pause
  */
 void draw_pauseMenuButtons(void)

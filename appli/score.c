@@ -1,9 +1,11 @@
-/*
- * score.c
- *
- *  Created on: 12 jan. 2024
- *      Author: Arnaud Morillon
- */
+/**
+  ******************************************************************************
+  * @file    score.c
+  * @author  Arnaud Morillon
+  * @date    January-2024
+  * @brief   Permet de compter le score du joueur et de l afficher pendant la partie et dans les menus
+  ******************************************************************************
+*/
 
 #include "score.h"
 #include "stm32f1_fonts.h"
@@ -12,7 +14,7 @@
 // Chrono en secondes
 static uint16_t chrono = 0;
 
-/*
+/**
  * @brief Incremente le temps d'une partie
  */
 void incrementChrono(void)
@@ -20,7 +22,7 @@ void incrementChrono(void)
     chrono++;
 }
 
-/*
+/**
  * @brief Reset le chrono
  */
  void resetChrono(void)
@@ -28,7 +30,7 @@ void incrementChrono(void)
      chrono = 0;
  }
 
- /*
+ /**
  * @brief 	Draw the player
  */
 void drawChrono_inGame(void)
@@ -41,7 +43,7 @@ void drawChrono_inGame(void)
         ILI9341_printf(0, 0, &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLACK, "%d:%d", minutes, secondes);
 }
  
- /*
+ /**
  * @brief 	Draw the player
  */
 void drawChrono_scoreboard(bool_e hasWon)

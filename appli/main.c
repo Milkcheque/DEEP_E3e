@@ -29,7 +29,7 @@ void display_update(void);
 bool_e checkScreenTouch(void);
 
 
-/*
+/**
  * @brief Calcule le temps d'une partie
  */
 void process_chrono_ms(void)
@@ -44,7 +44,7 @@ void process_chrono_ms(void)
 	}
 }
 
-/*
+/**
  * @brief Met Ã  jour l'affichage
  */
 void process_display_ms(void)
@@ -58,7 +58,7 @@ void process_display_ms(void)
 	}
 }
 
-/*
+/**
  * @brief Met Ã  jour le joueur
  */
 void process_updatePlayer_ms(void)
@@ -72,7 +72,7 @@ void process_updatePlayer_ms(void)
 	}
 }
 
-/*
+/**
  * @brief Met Ã  jour les cooldowns du joueur
  */
 void process_updateCD_ms(void)
@@ -107,7 +107,7 @@ void process_updateCD_ms(void)
 	}
 }
 
-/*
+/**
  * @brief Verifie si l'ecran est touchÃ© pour mettre le jeu en pause
  */
 void process_checkTouchForPause_ms(void)
@@ -124,7 +124,7 @@ void process_checkTouchForPause_ms(void)
 	}
 }
 
-/*
+/**
  * @brief Fonction principale
  */
 int main(void)
@@ -305,7 +305,7 @@ int main(void)
 	}
 }
 
-/*
+/**
  * @brief Supprime les fonctions du callback de systick
  */
 void remove_callbacks(void)
@@ -317,7 +317,7 @@ void remove_callbacks(void)
 	Systick_remove_callback_function(&process_chrono_ms);
 }
 
-/*
+/**
  * @brief Affiche les elements du jeu
  */
 void display_update(void)
@@ -325,6 +325,11 @@ void display_update(void)
 	drawPlayer();
 }
 
+/**
+ * @brief Vérifie si l écran est touché
+ *
+ * @return boolean pour savoir si l'écran est touché
+ */
 bool_e checkScreenTouch(void)
 {
     uint8_t x, y;
@@ -334,7 +339,7 @@ bool_e checkScreenTouch(void)
         return 0;
 }
 
-/*
+/**
  * @brief Change l'etat du jeu
  */
 void set_state(state_e new_state)
